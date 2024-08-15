@@ -1,4 +1,4 @@
-package com.heartfoilo.demo;
+package com.cracre.heartfoilo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
