@@ -7,7 +7,8 @@ build/
 !**/src/test/**/build/
 
 # Ignore application.yml in all directories
-**/application.yml
+application.yml
+/src/main/resources/application.yml
 
 # Optional: Do not ignore specific *.yml files if needed
 # For example, you can exclude other specific yml files from being ignored
