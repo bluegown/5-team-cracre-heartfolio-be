@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "orders")  // 테이블 이름을 'orders'로 변경
 public class Order {
 
     @Id
