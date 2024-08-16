@@ -4,6 +4,7 @@ import com.heartfoilo.demo.domain.stock.service.LikeService;
 import com.heartfoilo.demo.domain.stock.service.UserService;
 import com.heartfoilo.demo.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ public class StockController {
 
     private final LikeService likeService;
     private final UserService userService;
+
 
     @PostMapping("favorites/{stock_id}")
     public ResponseEntity<Map<String, String>> addFavorite(@PathVariable("stock_id") Long stockId) {
