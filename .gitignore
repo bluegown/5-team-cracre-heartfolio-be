@@ -1,3 +1,4 @@
+# General files and directories to ignore
 HELP.md
 .gradle
 build/
@@ -5,8 +6,14 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-!**/src/main/resources/*.yml
-src/main/resources/application.yml
+# Ignore application.yml in all directories
+**/application.yml
+
+# Optional: Do not ignore specific *.yml files if needed
+# For example, you can exclude other specific yml files from being ignored
+!**/src/main/resources/application-secret.yml
+
+# Ignore specific IDE and build tool related files and directories
 
 ### STS ###
 .apt_generated
@@ -28,9 +35,6 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
-!**/src/main/resources/*.yml
-src/main/resources/application.yml
 
 ### NetBeans ###
 /nbproject/private/

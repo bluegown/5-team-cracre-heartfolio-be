@@ -1,5 +1,7 @@
 package com.heartfoilo.demo.domain.stock.service;
 
+import com.heartfoilo.demo.domain.stock.constant.ErrorMessage;
+import com.heartfoilo.demo.domain.stock.dto.responseDto.FavoriteStockResponseDto;
 import com.heartfoilo.demo.domain.stock.entity.Like;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LikeServiceImpl implements LikeService {
@@ -28,24 +31,13 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public Like addFavorite(Long userId, Long stockId) {
+        Stock stock = stockRepository.findById(stockId)
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.STOCK_NOT_FOUND));
+
         // 사용자 조회
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
-        }
-        User user = userOptional.get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.USER_NOT_FOUND));
 
-        // 주식 조회
-        Optional<Stock> stockOptional = stockRepository.findById(stockId);
-        if (stockOptional.isEmpty()) {
-            throw new IllegalArgumentException("주식을 찾을 수 없습니다.");
-        }
-        Stock stock = stockOptional.get();
-
-        // 이미 존재하는 즐겨찾기인지 확인
-        if (likeRepository.existsByUserAndStock(user, stock)) {
-            throw new IllegalStateException("이미 즐겨찾기에 추가된 주식입니다.");
-        }
 
         // 새로운 Like 엔티티 생성 및 저장
         Like like = Like.builder()
@@ -57,12 +49,25 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public List<Like> getFavorites(Long userId) {
-        return List.of();
+    public List<FavoriteStockResponseDto> getFavorites(Long userId) {
+        List<Like> likes = likeRepository.findByUserId(userId);
+        if (likes.isEmpty()) {
+            throw new IllegalArgumentException(ErrorMessage.FAVORITE_STOCK_NOT_FOUND);
+        }
+        return likes.stream()
+                .map(like -> new FavoriteStockResponseDto(
+                        like.getStock().getId(),
+                        like.getStock().getCode(),
+                        like.getStock().getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void removeFavorite(Long userId, Long stockId) {
+        Like like = likeRepository.findByUserIdAndStockId(userId, stockId)
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.DELETE_STOCK_NOT_FOUND));
 
+        // 좋아요 항목을 삭제합니다.
+        likeRepository.delete(like);
     }
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "likes") //테이블 이름 Like로 수정 삭제해야함
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +17,8 @@ import lombok.NoArgsConstructor;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long likesId;
+    @Column(name = "likes_id")
+    private Long id; //id로 수정
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
