@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TotalAssetsRepository extends JpaRepository<TotalAssets, Long> {
     TotalAssets findByUserId(long userId);
+    TotalAssets findByStockId(long stockId);
 }

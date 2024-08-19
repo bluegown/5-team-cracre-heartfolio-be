@@ -91,4 +91,50 @@ public class PortfolioServiceImpl implements PortfolioService {
 
         return order;
     }
+
+    public Map<String,Object> getTotalStocks(){
+        List <TotalAssets> totalAssets = totalAssetsRepository.findAll();
+        // id , userId , stockId , quantity , purchaseAvgPrice
+        List<Map<String, Object>> totalAssetsList = new ArrayList<>();
+
+        TotalAssets[] assetsArray = totalAssets.toArray(new TotalAssets[0]);
+        for (TotalAssets asset : assetsArray) {
+            Long stockId = asset.getStockId(); // stockid get
+            Stock findStock = stockRepository.findByStockId(stockId);
+            String stockName = findStock.getName();
+            Long totalQuantity = asset.getTotalQuantity();
+            Long purchaseAvgPrice = asset.getPurchaseAvgPrice(); // 여기까지가 정적으로 받아오는 값
+            Long totalPurchasePrice = totalQuantity * purchaseAvgPrice; // 총매수값
+
+            int nowPrice = 1000000; // 소켓 변동값이 없어서 , nowPrice를 기준으로 계산
+            // 여기서부터 3개는 소켓 변동값 ##
+            Long evalValue = totalQuantity * nowPrice; // 현재 평가금액
+            Long evalProfit = evalValue - totalPurchasePrice; // 평가금액에서 총매수금액을 뺀게 평가손익
+            double profitPercentage = evalProfit/(float)totalPurchasePrice; // 수익률
+
+
+            Map<String, Object> stockMap = new HashMap<>();
+            stockMap.put("stock_id", stockId);
+            stockMap.put("name", stockName);
+            stockMap.put("total_quantity", totalQuantity);
+            stockMap.put("purchase_avg_price", purchaseAvgPrice);
+            stockMap.put("total_purchase_price", totalPurchasePrice);
+            stockMap.put("evalValue", evalValue);
+            stockMap.put("evalProfit", evalProfit);
+            stockMap.put("profitPercentage", profitPercentage);
+
+
+
+            // 리스트에 추가
+            totalAssetsList.add(stockMap);
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", "stocks");
+        response.put("stocks", totalAssetsList);
+
+        return response;
+
+
+
+    }
 }

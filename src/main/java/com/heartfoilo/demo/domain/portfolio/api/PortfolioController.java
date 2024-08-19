@@ -39,7 +39,10 @@ public class PortfolioController {
         return portfolioServiceImpl.getInvestInfo();
     }
 
-
+    @GetMapping("/totalStocks")
+    public Map<String,Object> getTotalStocks(){
+        return portfolioServiceImpl.getTotalStocks();
+    }
 
 
 }
