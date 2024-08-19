@@ -1,7 +1,7 @@
 package com.heartfoilo.demo.domain.stock.service;
 
 import com.heartfoilo.demo.domain.stock.constant.ErrorMessage;
-import com.heartfoilo.demo.domain.stock.dto.responseDto.FavoriteStockResponseDto;
+import com.heartfoilo.demo.domain.stock.dto.responseDto.LikeStockResponseDto;
 import com.heartfoilo.demo.domain.stock.entity.Like;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,16 +48,20 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public List<FavoriteStockResponseDto> getFavorites(Long userId) {
+    public List<LikeStockResponseDto> getFavorites(Long userId) {
         List<Like> likes = likeRepository.findByUserId(userId);
         if (likes.isEmpty()) {
             throw new IllegalArgumentException(ErrorMessage.FAVORITE_STOCK_NOT_FOUND);
         }
         return likes.stream()
-                .map(like -> new FavoriteStockResponseDto(
+                .map(like -> new LikeStockResponseDto(
                         like.getStock().getId(),
                         like.getStock().getCode(),
-                        like.getStock().getName()))
+                        like.getStock().getName(),
+                        //FIXME: 웹 소켓 연동되면 값 변경하기
+                        1,
+                        12.0f
+                ))
                 .collect(Collectors.toList());
     }
 

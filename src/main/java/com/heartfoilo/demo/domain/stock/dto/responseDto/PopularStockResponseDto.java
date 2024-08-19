@@ -2,12 +2,11 @@ package com.heartfoilo.demo.domain.stock.dto.responseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @AllArgsConstructor
-public class FavoriteStockResponseDto {
+public class PopularStockResponseDto {
     private Long stockId;
-    private String stockCode;
     private String stockName;
+    private float earningRate;
 }
