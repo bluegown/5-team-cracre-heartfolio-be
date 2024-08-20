@@ -1,5 +1,6 @@
 package com.heartfoilo.demo.util;
 
+import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,8 +15,7 @@ public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, Object> redisBlackListTemplate;
-    private final RedisTemplate<String, Object> emailTokenTemplate;
-    private final RedisTemplate<String, Object> registUserTemplate;
+    private final RedisTemplate<String, Object> stockInfoTemplate;
 
 //    @Value("${jwt.expmin}")
     private int expMin;
@@ -54,23 +54,20 @@ public class RedisUtil {
         return Boolean.TRUE.equals(redisBlackListTemplate.hasKey(key));
     }
 
-    public void setEmailTokenTemplate(String key, Object o, int minutes) {
-        emailTokenTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
-        emailTokenTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
+    public void setStockInfoTemplate(String key, Object o) {
+        stockInfoTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
+        stockInfoTemplate.opsForValue().set(key, o, 1440, TimeUnit.MINUTES);
     }
 
-    public Object getTokenByEmail(String key) {
-        emailTokenTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(String.class));
-        return emailTokenTemplate.opsForValue().get(key);
+    public StockSocketInfoDto getStockInfoTemplate(String key) {
+        stockInfoTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(StockSocketInfoDto.class));
+        return (StockSocketInfoDto) stockInfoTemplate.opsForValue().get(key);
     }
 
     public boolean hasKeyEmail(String key) {
-        return Boolean.TRUE.equals(emailTokenTemplate.hasKey(key));
+        return Boolean.TRUE.equals(stockInfoTemplate.hasKey(key));
     }
 
-    public void setRegistUserTemplate(String key, Object o, int minutes) {
-        registUserTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
-        registUserTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
-    }
+
 
 }
