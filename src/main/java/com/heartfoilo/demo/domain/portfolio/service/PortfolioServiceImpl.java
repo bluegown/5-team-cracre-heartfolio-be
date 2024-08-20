@@ -1,27 +1,26 @@
 package com.heartfoilo.demo.domain.portfolio.service;
 
-import com.heartfoilo.demo.domain.invest.entity.Order;
 import com.heartfoilo.demo.domain.invest.repository.InvestRepository;
-import com.heartfoilo.demo.domain.portfolio.dto.responseDto.GetInfoResponseDto;
+import com.heartfoilo.demo.domain.invest.dto.responseDto.GetInfoResponseDto;
 import com.heartfoilo.demo.domain.portfolio.entity.TotalAssets;
 import com.heartfoilo.demo.domain.portfolio.repository.PortfolioRepository;
 import com.heartfoilo.demo.domain.portfolio.repository.TotalAssetsRepository;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
 import com.heartfoilo.demo.domain.portfolio.entity.Account;
-
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class PortfolioServiceImpl implements PortfolioService {
 
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     private PortfolioRepository portfolioRepository;
@@ -34,8 +33,24 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Autowired
     private InvestRepository investRepository;
+
+    public Map<String, Object> createStockMap(Long stockId, String stockName, Long totalQuantity,
+                                              Long purchaseAvgPrice, Long totalPurchasePrice,
+                                              Long evalValue, Long evalProfit, Double profitPercentage) {
+        Map<String, Object> stockMap = new HashMap<>();
+        stockMap.put("stock_id", stockId);
+        stockMap.put("name", stockName);
+        stockMap.put("total_quantity", totalQuantity);
+        stockMap.put("purchase_avg_price", purchaseAvgPrice);
+        stockMap.put("total_purchase_price", totalPurchasePrice);
+        stockMap.put("evalValue", evalValue);
+        stockMap.put("evalProfit", evalProfit);
+        stockMap.put("profitPercentage", profitPercentage);
+
+        return stockMap;
+    }
     @Override
-    public GetInfoResponseDto getAssets(long userId) { // 보유 자산 조회 API
+    public Map<String,Object> getAssets(long userId) { // 보유 자산 조회 API
 
         User user = userRepository.findById(userId);
         Optional<Account> accountOpt = portfolioRepository.findById(userId);
@@ -44,14 +59,18 @@ public class PortfolioServiceImpl implements PortfolioService {
 
         long cash = account.getCash();
         long totalPurchase = account.getTotalPurchase();
-        GetInfoResponseDto responseDto = new GetInfoResponseDto();
-        responseDto.setCash(cash);
-        responseDto.setTotalPurchase(totalPurchase);
-        responseDto.setTotalAmount(100000000); // 웹소켓 변동값
-        responseDto.setTotalValue(100000000); // 웹소켓 변동값
-        responseDto.setProfitRate(-10.4); // 웹소켓 변동값
+
+
+        Map<String, Object> responseMap = new HashMap<>();
+
+        // 값들을 Map에 추가
+        responseMap.put("cash", cash);
+        responseMap.put("totalPurchase", totalPurchase);
+        responseMap.put("totalAmount", 10000000);
+        responseMap.put("totalValue", 10000000);
+        responseMap.put("profitRate", -10.4);
 // 요기 이제 소켓 데이터 들어가면 됨
-        return responseDto;
+        return responseMap;
     }
 
 
@@ -59,13 +78,14 @@ public class PortfolioServiceImpl implements PortfolioService {
     public Map<String,Object> getStocks(long userId) {
         List<TotalAssets> allAssets = totalAssetsRepository.findAll();
         // 여기서 stockId를 가져오고 , 이후에 stock에서 stockName을 찾아온다.
-        TotalAssets[] assetsArray = allAssets.toArray(new TotalAssets[0]);
+
 
         List<Map<String, Object>> stockList = new ArrayList<>();
         // 3. 배열의 각 항목에 접근하여 필요한 값 가져오기
-        for (TotalAssets asset : assetsArray) {
+        for (TotalAssets asset : allAssets) {
             Long stockId = asset.getStockId();
-            Stock findStock = stockRepository.findByStockId(stockId);
+            Optional<Stock> optionalStock = stockRepository.findById(stockId);
+            Stock findStock = optionalStock.get();
             String stockName = findStock.getName();
             double percentage = 10.4; // 실시간 소켓 변동값
             Map<String, Object> stockMap = new HashMap<>();
@@ -77,7 +97,6 @@ public class PortfolioServiceImpl implements PortfolioService {
             stockList.add(stockMap);
         }
         Map<String, Object> response = new HashMap<>();
-        response.put("data", "stocks");
         response.put("stocks", stockList);
 
         return response;
@@ -86,8 +105,9 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public List<Order> getInvestInfo(){
-        List<Order> order = investRepository.findAll();
+    public List<GetInfoResponseDto> getInvestInfo(){
+
+        List<GetInfoResponseDto> order = investRepository.findAllGetInfoResponseDto();
 
         return order;
     }
@@ -100,7 +120,8 @@ public class PortfolioServiceImpl implements PortfolioService {
         TotalAssets[] assetsArray = totalAssets.toArray(new TotalAssets[0]);
         for (TotalAssets asset : assetsArray) {
             Long stockId = asset.getStockId(); // stockid get
-            Stock findStock = stockRepository.findByStockId(stockId);
+            Optional<Stock> optionalStock = stockRepository.findById(stockId);
+            Stock findStock = optionalStock.get();
             String stockName = findStock.getName();
             Long totalQuantity = asset.getTotalQuantity();
             Long purchaseAvgPrice = asset.getPurchaseAvgPrice(); // 여기까지가 정적으로 받아오는 값
@@ -113,23 +134,14 @@ public class PortfolioServiceImpl implements PortfolioService {
             double profitPercentage = evalProfit/(float)totalPurchasePrice; // 수익률
 
 
-            Map<String, Object> stockMap = new HashMap<>();
-            stockMap.put("stock_id", stockId);
-            stockMap.put("name", stockName);
-            stockMap.put("total_quantity", totalQuantity);
-            stockMap.put("purchase_avg_price", purchaseAvgPrice);
-            stockMap.put("total_purchase_price", totalPurchasePrice);
-            stockMap.put("evalValue", evalValue);
-            stockMap.put("evalProfit", evalProfit);
-            stockMap.put("profitPercentage", profitPercentage);
-
+            Map<String, Object> stockMap = createStockMap(stockId, stockName, totalQuantity, purchaseAvgPrice,
+                    totalPurchasePrice, evalValue, evalProfit, profitPercentage);
 
 
             // 리스트에 추가
             totalAssetsList.add(stockMap);
         }
         Map<String, Object> response = new HashMap<>();
-        response.put("data", "stocks");
         response.put("stocks", totalAssetsList);
 
         return response;

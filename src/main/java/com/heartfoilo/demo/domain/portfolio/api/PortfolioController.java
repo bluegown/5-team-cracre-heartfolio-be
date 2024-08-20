@@ -1,9 +1,7 @@
 package com.heartfoilo.demo.domain.portfolio.api;
 
 
-import com.heartfoilo.demo.domain.invest.entity.Order;
-import com.heartfoilo.demo.domain.portfolio.dto.responseDto.GetInfoResponseDto;
-import com.heartfoilo.demo.domain.portfolio.entity.TotalAssets;
+import com.heartfoilo.demo.domain.invest.dto.responseDto.GetInfoResponseDto;
 import com.heartfoilo.demo.domain.portfolio.service.PortfolioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +21,7 @@ public class PortfolioController {
 
 
     @GetMapping("/{userId}") // 보유 자산 조회 API
-    public GetInfoResponseDto getAssets(@PathVariable ("userId") long userId){
+    public Map<String,Object> getAssets(@PathVariable ("userId") long userId){
 
         return portfolioServiceImpl.getAssets(userId);
     }
@@ -35,7 +33,7 @@ public class PortfolioController {
     }
 
     @GetMapping("/investInfo")
-    public List<Order> getInvestInfo(){
+    public List<GetInfoResponseDto> getInvestInfo(){
         return portfolioServiceImpl.getInvestInfo();
     }
 

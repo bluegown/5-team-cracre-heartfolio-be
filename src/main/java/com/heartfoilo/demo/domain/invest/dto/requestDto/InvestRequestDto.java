@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class GetInfoRequestDto {
+public class InvestRequestDto {
     private long quantity;
     private long price;
     private long stockId;
