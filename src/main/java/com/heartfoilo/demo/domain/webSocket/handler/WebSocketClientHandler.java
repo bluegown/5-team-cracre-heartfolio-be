@@ -1,14 +1,17 @@
-package com.heartfoilo.demo.domain.socket.handler;
+package com.heartfoilo.demo.domain.webSocket.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heartfoilo.demo.util.RedisUtil;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -16,8 +19,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Slf4j
+@RequiredArgsConstructor
+@Component
 public class WebSocketClientHandler extends TextWebSocketHandler {
 
+    private final RedisUtil redisUtil;
     Map<String, String> header = new HashMap<>();
     Map<String, String> input = new HashMap<>();
     Map<String, Map<String, String>> body = new HashMap<>();
@@ -33,15 +39,15 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.debug("connect success");
 
-        header.put("approval_key", approvalKey);
+        header.put("approval_key", "467845ef-28ba-4c37-a12a-0dbd4bc45517");
         header.put("custtype", "P");
         header.put("tr_type", "1");
         header.put("content-type", "utf-8");
 
-        input.put("tr_id", "H0STCNT0");
-//        input.put("tr_id", "HDFSCNT0");
-//        input.put("tr_key", "DNASAAPL");
-        input.put("tr_key", "000020");
+//        input.put("tr_id", "H0STCNT0");
+        input.put("tr_id", "HDFSCNT0");
+        input.put("tr_key", "DNASAAPL");
+//        input.put("tr_key", "000020");
         body.put("input", input);
         request.put("header", header);
         request.put("body", body);

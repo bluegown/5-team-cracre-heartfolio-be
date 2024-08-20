@@ -1,6 +1,7 @@
 package com.heartfoilo.demo.config;
 
-import com.heartfoilo.demo.domain.socket.handler.WebSocketClientHandler;
+import com.heartfoilo.demo.domain.webSocket.handler.WebSocketClientHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.WebSocketConnectionManager;
@@ -11,14 +12,18 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 @Configuration
 @EnableWebSocket
+@RequiredArgsConstructor
 public class WebSocketClientConfig implements WebSocketConfigurer {
-    private static final String URL = "ws://ops.koreainvestment.com:21000";
+
+    private static final String URL = "ws://ops.koreainvestment.com:31000";
+    private final WebSocketClientHandler webSocketClientHandler;
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
 
         WebSocketConnectionManager connectionManager = new WebSocketConnectionManager(webSocketClient,
-            new WebSocketClientHandler(), URL);
+            webSocketClientHandler, URL);
 
         connectionManager.setAutoStartup(true);
         connectionManager.start();
