@@ -13,30 +13,35 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "orders")
-public class Orders {
+@Builder
+@Table(name = "orders")  // 테이블 이름을 'orders'로 변경
+public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderId")
+    @Column(name = "order_id")
+
     private Long id;
 
 
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    @Column(nullable = false, length = 4)
+    @Column(name = "order_category", nullable = false, length = 4)
     private String orderCategory;
 
-    @Column(nullable = false)
+    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
-    @Column(nullable = false)
-    private Long orderAmount;
 
-    @Column(nullable = false)
-    private Long orderPrice;
+    @Column(name = "order_amount", nullable = false)
+    private int orderAmount;
 
-    @Column(nullable = false)
+    @Column(name = "order_price", nullable = false)
+    private int orderPrice;
+
+
+    @Column(name = "total_amount", nullable = false)
     private Long totalAmount;
 
 

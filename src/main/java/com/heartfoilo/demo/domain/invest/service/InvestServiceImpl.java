@@ -1,7 +1,7 @@
 package com.heartfoilo.demo.domain.invest.service;
 
 import com.heartfoilo.demo.domain.invest.dto.requestDto.InvestRequestDto;
-import com.heartfoilo.demo.domain.invest.entity.Orders;
+import com.heartfoilo.demo.domain.invest.entity.Order;
 import com.heartfoilo.demo.domain.invest.repository.InvestRepository;
 import com.heartfoilo.demo.domain.portfolio.entity.Account;
 import com.heartfoilo.demo.domain.portfolio.entity.TotalAssets;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -33,12 +32,12 @@ public class InvestServiceImpl {
     private StockRepository stockRepository;
     @Autowired
     private UserRepository userRepository;
-    public Orders createOrder(Long userId, String orderCategory, Long nowQuantity, Long nowAvgPrice,Long stockId) {
+    public Order createOrder(Long userId, String orderCategory, Long nowQuantity, Long nowAvgPrice, Long stockId) {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new RuntimeException("Stock not found with id: " + stockId));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        Orders orders = new Orders();
+        Order orders = new Order();
         orders.setUserId(userId);
         orders.setOrderCategory(orderCategory);
         orders.setOrderDate(LocalDateTime.now());
@@ -75,7 +74,7 @@ public class InvestServiceImpl {
 
 
         // orders 엔티티에 있는 내역 업데이트.
-        Orders orders = createOrder(1L, "buy", quantity, price,1L);
+        Order orders = createOrder(1L, "buy", quantity, price,1L);
         // stock_id는 auto_increment로 설정.
         investRepository.save(orders); // 투자 내역또한 저장 완료
 
@@ -111,7 +110,7 @@ public class InvestServiceImpl {
         Long nowQuantity = totalAssets.getTotalQuantity();
         Long nowAvgPrice = totalAssets.getPurchaseAvgPrice(); // 현재 평단가
         nowQuantity = nowQuantity - quantity ; // 판만큼 빼주고 , 판매시 평단가는 그대로임
-        Orders orders = createOrder( 1L, "sell", quantity, price,1L);
+        Order orders = createOrder( 1L, "sell", quantity, price,1L);
         if (nowQuantity < 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("판매할 수량이 보유 수량보다 많습니다.");
         }

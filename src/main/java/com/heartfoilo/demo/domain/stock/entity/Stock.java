@@ -12,8 +12,12 @@ public class Stock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "stockId")
+    @Column(name = "stock_id")
     private Long id;
+
+    @Column(nullable = false, length = 64)
+    private String code;
+
 
     @Column(nullable = false, length = 48)
     private String name;
@@ -24,6 +28,6 @@ public class Stock {
     @Column(nullable = false, length = 64)
     private String symbol;
 
-    @Column(nullable = false)
+    @Column(name = "earning_rate", nullable = false)
     private float earningRate;
 }
