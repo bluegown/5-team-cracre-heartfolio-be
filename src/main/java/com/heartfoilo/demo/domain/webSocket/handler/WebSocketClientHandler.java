@@ -2,6 +2,7 @@ package com.heartfoilo.demo.domain.webSocket.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
 import com.heartfoilo.demo.util.RedisUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         throws Exception {
         String s = message.getPayload().toString();
         System.out.println("s :"+s);
-//        handleData(s);
+        handleData(s);
 //        getData(s);
 
     }
@@ -82,6 +83,32 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     @Override
     public boolean supportsPartialMessages() {
         return false;
+    }
+
+
+    public static StockSocketInfoDto parseStockData(String data) {
+        String[] mainParts = data.split("\\|");
+        if (mainParts.length < 4) {
+            throw new IllegalArgumentException("Invalid data format");
+        }
+
+        String stockInfo = mainParts[3];
+        String[] details = stockInfo.split("\\^");
+
+        if (details.length < 15) {
+            throw new IllegalArgumentException("Stock details segment is too short");
+        }
+
+        // 추출된 데이터를 DTO에 매핑
+        return StockSocketInfoDto.builder()
+            .SYMB(details[1]) // 종목 코드
+            .LAST(Integer.parseInt(details[11].replace(".","")))
+            .OPEN(Integer.parseInt(details[8].replace(".","")))
+            .HIGH(Integer.parseInt(details[9].replace(".","")))
+            .low_cost(Integer.parseInt(details[10].replace(".","")))
+            .earningValue(Math.round(Float.parseFloat(details[12])))
+            .earningRate(Float.parseFloat(details[13]))
+            .build();
     }
 
     private static void getData(String encryptedData){
@@ -119,11 +146,11 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         return data;
     }
 
-    public static void handleData(String data) {
-        if (data.trim().startsWith("{")) {
-            parseJson(data);
-        } else {
-            parseCustomFormat(data);
+    public void handleData(String data) {
+        if (!data.trim().startsWith("{")) {
+            StockSocketInfoDto stockSocketInfoDto = parseStockData(data);
+            redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSYMB(), stockSocketInfoDto);
+            log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSYMB()).getLAST());
         }
     }
 
