@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface StockRepository extends JpaRepository<Stock, Long> {
-    @Query("SELECT s FROM Stock s JOIN StockInfo si ON s.id = si.stock.id ORDER BY si.totalMarketPrice DESC")
-    List<Stock> findTopStocksByTotalMarketPrice(Pageable pageable);
+
+    List<Stock> findAllByOrderByEarningRateDesc(Pageable pageable);
 
     List<Stock> findByNameContainingOrSymbolContaining(String nameKeyword, String symbolKeyword);
 }
