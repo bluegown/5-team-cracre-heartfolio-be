@@ -5,9 +5,8 @@ import com.heartfoilo.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Data
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -10,8 +10,7 @@ import org.hibernate.annotations.Fetch;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
