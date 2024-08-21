@@ -11,8 +11,6 @@ src/main/java/com/heartfoilo/demo/global/exception/GlobalExceptionHandler.java
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-# Ignore application.yml in all directories
 application.yml
 /src/main/resources/*.yml
 
@@ -43,7 +41,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/

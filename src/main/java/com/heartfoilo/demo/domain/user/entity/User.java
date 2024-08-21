@@ -24,5 +24,5 @@ public class User {
     @Column(nullable = false, length = 28)
     private String nickname;
 
-    private String profile;
+    // private String profile;
 }

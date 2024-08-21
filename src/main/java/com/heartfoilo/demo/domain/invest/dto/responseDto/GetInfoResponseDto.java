@@ -1,25 +1,30 @@
 package com.heartfoilo.demo.domain.invest.dto.responseDto;
 
 import com.heartfoilo.demo.domain.user.entity.User;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class GetInfoResponseDto {
-    private final String name;
-    private final String email;
-    private final String nickname;
-    private final String profile;
-    private final long cash;
-    private final long donate;
-
-    @Builder
-    public GetInfoResponseDto(User user, long cash, long donate){
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.nickname = user.getNickname();
-        this.profile = user.getProfile();
-        this.cash = cash;
-        this.donate = donate;
+    private String orderCategory;
+    private LocalDateTime orderDate;
+    private Long orderAmount;
+    private int orderPrice;
+    private Long totalAmount;
+    private Long id;
+    private String name;
+    public GetInfoResponseDto(String name, String orderCategory, LocalDateTime orderDate, Long orderAmount, int orderPrice, Long totalAmount, Long id) {
+        this.name = name;
+        this.orderCategory = orderCategory;
+        this.orderDate = orderDate;
+        this.orderAmount = orderAmount;
+        this.orderPrice = orderPrice;
+        this.totalAmount = totalAmount;
+        this.id = id;
     }
 }
