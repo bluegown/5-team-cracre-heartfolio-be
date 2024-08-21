@@ -2,13 +2,19 @@
 HELP.md
 .gradle
 build/
+# macOS system files
+.DS_Store
+
+# Ignore GlobalExceptionHandler.java
+src/main/java/com/heartfoilo/demo/global/exception/GlobalExceptionHandler.java
+
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 # Ignore application.yml in all directories
 application.yml
-/src/main/resources/application.yml
+/src/main/resources/*.yml
 
 # Optional: Do not ignore specific *.yml files if needed
 # For example, you can exclude other specific yml files from being ignored
