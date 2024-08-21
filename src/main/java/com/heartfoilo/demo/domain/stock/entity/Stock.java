@@ -15,9 +15,6 @@ public class Stock {
     @Column(name = "stock_id")
     private Long id;
 
-    @Column(nullable = false, length = 64)
-    private String code;
-
     @Column(nullable = false, length = 48)
     private String name;
 

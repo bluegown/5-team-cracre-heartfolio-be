@@ -9,7 +9,7 @@ public class GetInfoResponseDto {
     private final String name;
     private final String email;
     private final String nickname;
-    private final String profile;
+    // private final String profile;
     private final long cash;
     private final long donate;
 
@@ -18,7 +18,7 @@ public class GetInfoResponseDto {
         this.name = user.getName();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
-        this.profile = user.getProfile();
+        // this.profile = user.getProfile();
         this.cash = cash;
         this.donate = donate;
     }
