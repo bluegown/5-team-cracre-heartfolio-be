@@ -12,6 +12,7 @@ public class InvestController {
 
     @Autowired
     private InvestServiceImpl investServiceImpl;
+  
     @PostMapping("/order")
     public ResponseEntity<?> order(@RequestBody InvestRequestDto getInfoRequestDto){
 
@@ -26,4 +27,5 @@ public class InvestController {
         return investServiceImpl.sell(getInfoRequestDto);
         // entity에 직접적으로 접근 xxx
     }
+
 }

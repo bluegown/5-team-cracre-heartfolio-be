@@ -8,6 +8,7 @@ import lombok.Data;
 public class LikeStockResponseDto {
     private Long stockId;
     private String stockName;
+    private int currentPrice;  // 현재가 필드 추가
     private Integer earningValue;
     private float earningRate;
 }

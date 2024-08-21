@@ -7,6 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class PopularStockResponseDto {
     private Long stockId;
+    private Integer rank;
     private String stockName;
+    private int currentPrice;  // 현재가 필드 추가
+    private Integer earningValue;
     private float earningRate;
 }
