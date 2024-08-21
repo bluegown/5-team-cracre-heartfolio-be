@@ -12,6 +12,8 @@ import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.converter.SimpleMessageConverter;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -25,6 +27,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class WebSocketClientHandler extends TextWebSocketHandler {
 
     private final RedisUtil redisUtil;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     Map<String, String> header = new HashMap<>();
     Map<String, String> input = new HashMap<>();
     Map<String, Map<String, String>> body = new HashMap<>();
@@ -147,6 +150,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             StockSocketInfoDto stockSocketInfoDto = parseStockData(data);
             redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
             log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSymbol()).getCurPrice());
+            simpMessagingTemplate.convertAndSend("/to/stock/"+stockSocketInfoDto.getSymbol());
         }
     }
 
