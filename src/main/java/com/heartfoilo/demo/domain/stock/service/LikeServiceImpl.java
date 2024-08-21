@@ -8,6 +8,7 @@ import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import com.heartfoilo.demo.global.exception.LikeStockNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,16 +52,16 @@ public class LikeServiceImpl implements LikeService {
     public List<LikeStockResponseDto> getFavorites(Long userId) {
         List<Like> likes = likeRepository.findByUserId(userId);
         if (likes.isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.FAVORITE_STOCK_NOT_FOUND);
+            throw new LikeStockNotFoundException(ErrorMessage.FAVORITE_STOCK_NOT_FOUND);
         }
         return likes.stream()
                 .map(like -> new LikeStockResponseDto(
                         like.getStock().getId(),
-                        like.getStock().getCode(),
                         like.getStock().getName(),
                         //FIXME: 웹 소켓 연동되면 값 변경하기
-                        1,
-                        12.0f
+                        12000, //현재가
+                        1, //전일 대비 수익
+                        12.0f //수익률
                 ))
                 .collect(Collectors.toList());
     }
@@ -68,7 +69,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public void removeFavorite(Long userId, Long stockId) {
         Like like = likeRepository.findByUserIdAndStockId(userId, stockId)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.DELETE_STOCK_NOT_FOUND));
+                .orElseThrow(() -> new LikeStockNotFoundException(ErrorMessage.DELETE_STOCK_NOT_FOUND));
 
         // 좋아요 항목을 삭제합니다.
         likeRepository.delete(like);

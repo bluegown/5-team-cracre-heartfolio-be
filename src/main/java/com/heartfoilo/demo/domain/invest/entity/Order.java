@@ -31,7 +31,7 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Column(name = "order_amount", nullable = false)
-    private int orderAmount;
+    private Long orderAmount;
 
     @Column(name = "order_price", nullable = false)
     private int orderPrice;
