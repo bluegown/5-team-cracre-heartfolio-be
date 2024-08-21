@@ -83,13 +83,12 @@ public class PortfolioServiceImpl implements PortfolioService {
         List<Map<String, Object>> stockList = new ArrayList<>();
         // 3. 배열의 각 항목에 접근하여 필요한 값 가져오기
         for (TotalAssets asset : allAssets) {
-            Long stockId = asset.getStockId();
-            Optional<Stock> optionalStock = stockRepository.findById(stockId);
-            Stock findStock = optionalStock.get();
+
+            Stock findStock = asset.getStock();
             String stockName = findStock.getName();
             Long evalPrice = 30000000L;
             Map<String, Object> stockMap = new HashMap<>();
-            stockMap.put("id", stockId);
+            stockMap.put("id", findStock.getId());
             stockMap.put("stockName", stockName);
             stockMap.put("evalPrice", evalPrice);
 
@@ -119,9 +118,8 @@ public class PortfolioServiceImpl implements PortfolioService {
 
         TotalAssets[] assetsArray = totalAssets.toArray(new TotalAssets[0]);
         for (TotalAssets asset : assetsArray) {
-            Long stockId = asset.getStockId(); // stockid get
-            Optional<Stock> optionalStock = stockRepository.findById(stockId);
-            Stock findStock = optionalStock.get();
+
+            Stock findStock = asset.getStock();
             String stockName = findStock.getName();
             Long totalQuantity = asset.getTotalQuantity();
             Long purchaseAvgPrice = asset.getPurchaseAvgPrice(); // 여기까지가 정적으로 받아오는 값
@@ -134,7 +132,7 @@ public class PortfolioServiceImpl implements PortfolioService {
             double profitPercentage = evalProfit/(float)totalPurchasePrice; // 수익률
 
 
-            Map<String, Object> stockMap = createStockMap(stockId, stockName, totalQuantity, purchaseAvgPrice,
+            Map<String, Object> stockMap = createStockMap(findStock.getId(), stockName, totalQuantity, purchaseAvgPrice,
                     totalPurchasePrice, evalValue, evalProfit, profitPercentage);
 
 

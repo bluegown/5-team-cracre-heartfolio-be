@@ -1,6 +1,7 @@
 package com.heartfoilo.demo.domain.portfolio.entity;
 
 
+import com.heartfoilo.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +19,9 @@ public class Account {
     @Column(name = "account_id")
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "cash", nullable = false)
     private Long cash;

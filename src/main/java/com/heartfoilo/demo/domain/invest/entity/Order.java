@@ -5,6 +5,7 @@ import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDateTime;
 
@@ -20,12 +21,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-
     private Long id;
 
-
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
 
     @Column(name = "order_category", nullable = false, length = 4)
     private String orderCategory;
@@ -45,12 +42,12 @@ public class Order {
     private Long totalAmount;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id", nullable = false)
     @JsonIgnore
     private Stock stock;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

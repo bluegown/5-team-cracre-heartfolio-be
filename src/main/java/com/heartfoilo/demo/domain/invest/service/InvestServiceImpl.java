@@ -38,7 +38,7 @@ public class InvestServiceImpl {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         Order orders = new Order();
-        orders.setUserId(userId);
+        orders.setUser(user);
         orders.setOrderCategory(orderCategory);
         orders.setOrderDate(LocalDateTime.now());
         orders.setOrderAmount(nowQuantity);
@@ -54,11 +54,16 @@ public class InvestServiceImpl {
         Long quantity = getInfoRequestDto.getQuantity();
         long price = getInfoRequestDto.getPrice();
 
+        Optional<Stock> optionalStock = stockRepository.findById(stockId);
+        Stock stock = optionalStock.get();
+
+        User user = userRepository.findById(1L);
+
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
         if (totalAssets == null) {
             totalAssets = new TotalAssets();
-            totalAssets.setStockId(stockId);
-            totalAssets.setUserId(1L);
+            totalAssets.setStock(stock);
+            totalAssets.setUser(user);
             totalAssets.setTotalQuantity(quantity);
             totalAssets.setPurchaseAvgPrice(price);
             totalAssetsRepository.save(totalAssets);
