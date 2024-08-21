@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
                         order.getId(),
                         order.getOrderCategory(),
                         order.getOrderDate(),
-                        Math.toIntExact(order.getOrderAmount()),
+                        order.getOrderAmount(),
                         order.getOrderPrice()
                 )).collect(Collectors.toList());
     }
