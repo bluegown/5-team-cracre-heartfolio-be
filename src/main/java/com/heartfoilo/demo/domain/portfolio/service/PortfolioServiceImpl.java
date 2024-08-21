@@ -38,11 +38,11 @@ public class PortfolioServiceImpl implements PortfolioService {
                                               Long purchaseAvgPrice, Long totalPurchasePrice,
                                               Long evalValue, Long evalProfit, Double profitPercentage) {
         Map<String, Object> stockMap = new HashMap<>();
-        stockMap.put("stock_id", stockId);
+        stockMap.put("stockId", stockId);
         stockMap.put("name", stockName);
-        stockMap.put("total_quantity", totalQuantity);
-        stockMap.put("purchase_avg_price", purchaseAvgPrice);
-        stockMap.put("total_purchase_price", totalPurchasePrice);
+        stockMap.put("totalQuantity", totalQuantity);
+        stockMap.put("purchaseAvgPrice", purchaseAvgPrice);
+        stockMap.put("totalPurchasePrice", totalPurchasePrice);
         stockMap.put("evalValue", evalValue);
         stockMap.put("evalProfit", evalProfit);
         stockMap.put("profitPercentage", profitPercentage);
@@ -87,11 +87,11 @@ public class PortfolioServiceImpl implements PortfolioService {
             Optional<Stock> optionalStock = stockRepository.findById(stockId);
             Stock findStock = optionalStock.get();
             String stockName = findStock.getName();
-            double percentage = 10.4; // 실시간 소켓 변동값
+            Long evalPrice = 30000000L;
             Map<String, Object> stockMap = new HashMap<>();
             stockMap.put("id", stockId);
-            stockMap.put("stock_name", stockName);
-            stockMap.put("percentage", percentage);
+            stockMap.put("stockName", stockName);
+            stockMap.put("evalPrice", evalPrice);
 
             // 리스트에 추가
             stockList.add(stockMap);

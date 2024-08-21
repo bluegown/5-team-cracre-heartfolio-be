@@ -56,7 +56,6 @@ public class LikeServiceImpl implements LikeService {
         return likes.stream()
                 .map(like -> new LikeStockResponseDto(
                         like.getStock().getId(),
-                        like.getStock().getCode(),
                         like.getStock().getName(),
                         //FIXME: 웹 소켓 연동되면 값 변경하기
                         1,

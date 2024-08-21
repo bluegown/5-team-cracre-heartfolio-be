@@ -32,7 +32,7 @@ public class InvestServiceImpl {
     private StockRepository stockRepository;
     @Autowired
     private UserRepository userRepository;
-    public Order createOrder(Long userId, String orderCategory, Long nowQuantity, Long nowAvgPrice, Long stockId) {
+    public Order createOrder(Long userId, String orderCategory, Long nowQuantity, int nowAvgPrice, Long stockId) {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new RuntimeException("Stock not found with id: " + stockId));
         User user = userRepository.findById(userId)
@@ -74,7 +74,7 @@ public class InvestServiceImpl {
 
 
         // orders 엔티티에 있는 내역 업데이트.
-        Order orders = createOrder(1L, "buy", quantity, price,1L);
+        Order orders = createOrder(1L, "buy", quantity, (int) price,1L);
         // stock_id는 auto_increment로 설정.
         investRepository.save(orders); // 투자 내역또한 저장 완료
 
@@ -95,7 +95,7 @@ public class InvestServiceImpl {
 
         //변경된 엔티티를 저장
         totalAssetsRepository.save(totalAssets);
-        return ResponseEntity.ok("자산이 성공적으로 업데이트되었습니다.");
+        return ResponseEntity.ok("buy order successfully processed and total assets updated.");
     }
 
     public ResponseEntity<?> sell(InvestRequestDto getInfoRequestDto){
@@ -110,7 +110,7 @@ public class InvestServiceImpl {
         Long nowQuantity = totalAssets.getTotalQuantity();
         Long nowAvgPrice = totalAssets.getPurchaseAvgPrice(); // 현재 평단가
         nowQuantity = nowQuantity - quantity ; // 판만큼 빼주고 , 판매시 평단가는 그대로임
-        Order orders = createOrder( 1L, "sell", quantity, price,1L);
+        Order orders = createOrder( 1L, "sell", quantity, (int)price,1L);
         if (nowQuantity < 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("판매할 수량이 보유 수량보다 많습니다.");
         }
@@ -132,7 +132,7 @@ public class InvestServiceImpl {
             // total_quantity가 0이 아니면 업데이트 후 저장
             totalAssets.setTotalQuantity(nowQuantity); // quantity 변경
             totalAssetsRepository.save(totalAssets); // 항목들 변경해주고 save
-            return ResponseEntity.ok(totalAssets);
+            return ResponseEntity.ok("Sell order successfully processed and total assets updated.");
         }
 
 
