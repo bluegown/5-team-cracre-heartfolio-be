@@ -62,7 +62,6 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
         throws Exception {
         String s = message.getPayload().toString();
-        System.out.println("s :"+s);
         handleData(s);
 //        getData(s);
 
@@ -113,14 +112,11 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 
     private static void getData(String encryptedData){
         try {
-
             IvParameterSpec ivSpec = new IvParameterSpec(adjustByteLength(value_iv, 16));
             SecretKeySpec skeySpec = new SecretKeySpec(adjustByteLength(value_key, 32), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivSpec);
-//            byte[] encrypt = hexStringToByteArray(encryptedData);
-//            System.out.println("len "+encrypt.length);
             byte[] original = cipher.doFinal(adjustByteLength(encryptedData, 16*1000));
             String originalString = new String(original);
             System.out.println("Original string: " + originalString);
@@ -169,12 +165,6 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             String iv = outputNode.path("iv").asText();
             String key = outputNode.path("key").asText();
 
-            System.out.println("Transaction ID: " + trId);
-            System.out.println("Return Code: " + rtCd);
-            System.out.println("Message Code: " + msgCd);
-            System.out.println("Message: " + msg);
-            System.out.println("IV: " + iv);
-            System.out.println("Key: " + key);
             value_iv = iv;
             value_key = key;
 
@@ -183,9 +173,4 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         }
     }
 
-    public static void parseCustomFormat(String data) {
-//        String[] fields = data.split("\\|");
-//        System.out.println("First field: " + fields[0]);
-        getData(data);
-    }
 }
