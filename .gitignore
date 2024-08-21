@@ -12,9 +12,29 @@ application.yml
 # For example, you can exclude other specific yml files from being ignored
 !**/src/main/resources/application-secret.yml
 
+# Ignore specific IDE and build tool related files and directories
 
->>>>>>> dev
-### NetBeans ###
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
 /nbproject/private/
 /nbbuild/
 /dist/
