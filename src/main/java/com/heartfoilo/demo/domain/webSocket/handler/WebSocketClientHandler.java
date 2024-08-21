@@ -100,11 +100,11 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 
         // 추출된 데이터를 DTO에 매핑
         return StockSocketInfoDto.builder()
-            .SYMB(details[1]) // 종목 코드
-            .LAST(Integer.parseInt(details[11].replace(".","")))
-            .OPEN(Integer.parseInt(details[8].replace(".","")))
-            .HIGH(Integer.parseInt(details[9].replace(".","")))
-            .low_cost(Integer.parseInt(details[10].replace(".","")))
+            .symbol(details[1]) // 종목 코드
+            .curPrice(Integer.parseInt(details[11].replace(".","")))
+            .openPrice(Integer.parseInt(details[8].replace(".","")))
+            .highPrice(Integer.parseInt(details[9].replace(".","")))
+            .lowPrice(Integer.parseInt(details[10].replace(".","")))
             .earningValue(Math.round(Float.parseFloat(details[12])))
             .earningRate(Float.parseFloat(details[13]))
             .build();
@@ -145,8 +145,8 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     public void handleData(String data) {
         if (!data.trim().startsWith("{")) {
             StockSocketInfoDto stockSocketInfoDto = parseStockData(data);
-            redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSYMB(), stockSocketInfoDto);
-            log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSYMB()).getLAST());
+            redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
+            log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSymbol()).getCurPrice());
         }
     }
 

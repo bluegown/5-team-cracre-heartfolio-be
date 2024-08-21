@@ -64,7 +64,7 @@ public class RedisUtil {
         return (StockSocketInfoDto) stockInfoTemplate.opsForValue().get(key);
     }
 
-    public boolean hasKeyEmail(String key) {
+    public boolean hasKeyStockInfo(String key) {
         return Boolean.TRUE.equals(stockInfoTemplate.hasKey(key));
     }
 
