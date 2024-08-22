@@ -4,6 +4,8 @@ import com.heartfoilo.demo.domain.portfolio.entity.TotalAssets;
 import com.heartfoilo.demo.domain.portfolio.repository.TotalAssetsRepository;
 import com.heartfoilo.demo.domain.stock.dto.responseDto.GetAmountResponseDto;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
+import com.heartfoilo.demo.domain.stock.entity.Like;
+import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
 import com.heartfoilo.demo.global.exception.StockNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StockInfoServiceImpl {
@@ -19,6 +22,8 @@ public class StockInfoServiceImpl {
     private StockRepository stockRepository;
     @Autowired
     private TotalAssetsRepository totalAssetsRepository;
+    @Autowired
+    private LikeRepository likeRepository;
     public GetAmountResponseDto getInfo(long stockId) {
         // stockId로 Stock을 조회
         Stock stock = stockRepository.findById(stockId);
@@ -38,8 +43,13 @@ public class StockInfoServiceImpl {
 
         // 총량을 가져옴
         Long quantity = totalAssets.getTotalQuantity();
+        Optional<Like> like = likeRepository.findByUserIdAndStockId(stockId,1L);
+        // TODO: userId 수정
+        boolean isLikePresent = like.isPresent();
+
+
 
         // GetAmountResponseDto 객체 생성 후 반환
-        return new GetAmountResponseDto(symbol, name, quantity);
+        return new GetAmountResponseDto(symbol, name, quantity,isLikePresent);
     }
 }

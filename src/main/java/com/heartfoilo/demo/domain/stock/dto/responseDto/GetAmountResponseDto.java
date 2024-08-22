@@ -11,6 +11,7 @@ public class GetAmountResponseDto {
     private String symbol;
     private String name;
     private Long amount;
+    private boolean isLikePresent;
 
 
 }
