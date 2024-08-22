@@ -24,6 +24,14 @@ public class Stock {
     @Column(nullable = false, length = 64)
     private String symbol;
 
+    @Column(nullable = false, length = 48)
+    private String type;
+
+
+
     @Column(name = "earning_rate", nullable = false)
     private float earningRate;
+
+    @Column(name = "english_name", nullable = false)
+    private String englishName;
 }
