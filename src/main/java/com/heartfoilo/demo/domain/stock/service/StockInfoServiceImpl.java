@@ -32,7 +32,7 @@ public class StockInfoServiceImpl {
         }
 
         // symbol과 name 값을 가져옴
-        String symbol = stock.getType() + ":" + stock.getSymbol();
+        String symbol = stock.getSymbol();
         String name = stock.getName();
 
         // stockId로 TotalAssets를 조회
