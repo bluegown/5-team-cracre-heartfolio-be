@@ -152,7 +152,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             StockSocketInfoDto stockSocketInfoDto = parseStockData(data);
             redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
             log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSymbol()).getCurPrice());
-            simpMessagingTemplate.convertAndSend("/to/stock/"+stockSocketInfoDto.getSymbol());
+            simpMessagingTemplate.convertAndSend("/from/stock/"+stockSocketInfoDto.getSymbol());
         }
     }
 
