@@ -38,7 +38,6 @@ public class LikeServiceImpl implements LikeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.USER_NOT_FOUND));
 
-
         // 새로운 Like 엔티티 생성 및 저장
         Like like = Like.builder()
                 .user(user)
@@ -51,9 +50,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public List<LikeStockResponseDto> getFavorites(Long userId) {
         List<Like> likes = likeRepository.findByUserId(userId);
-        if (likes.isEmpty()) {
-            throw new LikeStockNotFoundException(ErrorMessage.FAVORITE_STOCK_NOT_FOUND);
-        }
+
         return likes.stream()
                 .map(like -> new LikeStockResponseDto(
                         like.getStock().getId(),
