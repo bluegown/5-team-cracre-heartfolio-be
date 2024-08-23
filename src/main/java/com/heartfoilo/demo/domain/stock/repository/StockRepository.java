@@ -12,6 +12,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     List<Stock> findAllByOrderByEarningRateDesc(Pageable pageable);
 
+    Stock findById(long stockId);
 
     List<Stock> findByNameContainingOrSymbolContaining(String nameKeyword, String symbolKeyword);
 }

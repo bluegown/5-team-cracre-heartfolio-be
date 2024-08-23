@@ -1,6 +1,5 @@
 package com.heartfoilo.demo.domain.stock.service;
 
-import com.heartfoilo.demo.domain.donation.entity.A;
 import com.heartfoilo.demo.domain.stock.constant.ErrorMessage;
 import com.heartfoilo.demo.domain.stock.dto.responseDto.PopularStockResponseDto;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,9 +25,6 @@ public class PopularStockServiceImpl implements PopularStockService{
     public List<PopularStockResponseDto> getPopularStocks(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
         List<Stock> popularStocks=  stockRepository.findAllByOrderByEarningRateDesc(pageable);
-        if (popularStocks.isEmpty()) {
-            throw new PopularStockNotFoundException(ErrorMessage.POPULAR_STOCK_NOT_FOUND);
-        }
 
         AtomicInteger rankCounter = new AtomicInteger(1);
 

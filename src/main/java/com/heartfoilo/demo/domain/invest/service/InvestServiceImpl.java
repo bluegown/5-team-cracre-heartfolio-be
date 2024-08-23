@@ -56,8 +56,8 @@ public class InvestServiceImpl {
 
         Optional<Stock> optionalStock = stockRepository.findById(stockId);
         Stock stock = optionalStock.get();
+        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
 
-        User user = userRepository.findById(1L);
 
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
         if (totalAssets == null) {
@@ -68,37 +68,37 @@ public class InvestServiceImpl {
             totalAssets.setPurchaseAvgPrice(price);
             totalAssetsRepository.save(totalAssets);
             return ResponseEntity.ok("자산이 성공적으로 업데이트되었습니다.");
-        } // 만약 기록이 없는 주식을 매수했다면 , 새로운 객체를 생성해서 set -> 이후 업데이트 완료 return
+        }
         Long nowQuantity = totalAssets.getTotalQuantity();
-        Long nowAvgPrice = totalAssets.getPurchaseAvgPrice(); // 현재 평단가
+        Long nowAvgPrice = totalAssets.getPurchaseAvgPrice();
 
-        nowAvgPrice = ((nowQuantity * nowAvgPrice) + (quantity * price)) / (nowQuantity + quantity); // 새로운 평단가 갱신
-        nowQuantity = nowQuantity + quantity ; // 산만큼 더해준다 . 새로운 quantity 갱신
-        totalAssets.setTotalQuantity(nowQuantity); // quantity 변경
-        totalAssets.setPurchaseAvgPrice(nowAvgPrice); // avgprice 변경
+        nowAvgPrice = ((nowQuantity * nowAvgPrice) + (quantity * price)) / (nowQuantity + quantity);
+        nowQuantity = nowQuantity + quantity ;
+        totalAssets.setTotalQuantity(nowQuantity);
+        totalAssets.setPurchaseAvgPrice(nowAvgPrice);
 
 
         // orders 엔티티에 있는 내역 업데이트.
-        Order orders = createOrder(1L, "buy", quantity, (int) price,1L);
-        // stock_id는 auto_increment로 설정.
-        investRepository.save(orders); // 투자 내역또한 저장 완료
+        Order orders = createOrder(1L, "buy", quantity, (int) price,1L); // TODO : userId JWT로 대체, stockId 조치 필요
+
+        investRepository.save(orders);
 
         // Account 엔티티 업데이트
-        Optional<Account> accountOptional = portfolioRepository.findById(1L); // 임시 코드
+        Optional<Account> accountOptional = portfolioRepository.findById(1L); // TODO : userId JWT로 대체
         Account account = accountOptional.orElseThrow(() -> new RuntimeException("Account not found with id: 1"));
-        // 아이디를 찾는다면 account 객체 사용. 아니라면 RuntimeException 처리
-        Long cash = account.getCash(); // 현재 잔액 조회
+
+        Long cash = account.getCash();
         Long totalPurchase = account.getTotalPurchase();
-        if (cash >= quantity * price) { // 만약 보유한 cash가 매수하려는 금액보다 이상이라면 -> 작업 시행
-            account.setCash(cash - (quantity * price)); // 매수이므로 cash는 차감
-            account.setTotalPurchase(totalPurchase + (quantity * price)); // 매수한만큼 추가
-        } // Cash의 보유량을 빼고 , total_purchase를 매수한 수량 * 평단가만큼 더함
+        if (cash >= quantity * price) {
+            account.setCash(cash - (quantity * price));
+            account.setTotalPurchase(totalPurchase + (quantity * price));
+        }
         else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잔액이 부족합니다.");
         }
-        portfolioRepository.save(account); // 새로운 내역들로 업데이트 시켜준다.
+        portfolioRepository.save(account);
 
-        //변경된 엔티티를 저장
+
         totalAssetsRepository.save(totalAssets);
         return ResponseEntity.ok("buy order successfully processed and total assets updated.");
     }

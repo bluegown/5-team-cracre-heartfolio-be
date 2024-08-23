@@ -27,9 +27,6 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderHistoryResponseDto> getOrderHistory(Long userId, Long stockId) {
         List<Order> orders = orderRepository.findByStockIdAndUserId(stockId, userId);
 
-        if (orders.isEmpty()) {
-            throw new OrderHistoryNotFoundException(ErrorMessage.STOCK_SEARCH_NOT_FOUND);
-        }
         return orders.stream()
                 .map(order -> new OrderHistoryResponseDto(
                         order.getId(),
@@ -43,9 +40,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<StockSearchResponseDto> getStockSearch(String keyword) {
         List<Stock> stocks = stockRepository.findByNameContainingOrSymbolContaining(keyword, keyword);
-        if(stocks.isEmpty()) {
-            throw new StockSearchNotFoundException(ErrorMessage.ORDER_HISTORY_NOT_FOUND);
-        }
+
         return stocks.stream()
                 .map(stock -> new StockSearchResponseDto(
                         stock.getId(),

@@ -17,7 +17,6 @@ public class InvestController {
     public ResponseEntity<?> order(@RequestBody InvestRequestDto getInfoRequestDto){
 
         return investServiceImpl.order(getInfoRequestDto);
-        // entity에 직접적으로 접근 xxx
 
     }
 
@@ -25,7 +24,6 @@ public class InvestController {
     public ResponseEntity<?> sell(@RequestBody InvestRequestDto getInfoRequestDto){
 
         return investServiceImpl.sell(getInfoRequestDto);
-        // entity에 직접적으로 접근 xxx
     }
 
 }
