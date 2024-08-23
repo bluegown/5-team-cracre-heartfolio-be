@@ -30,6 +30,8 @@ public class KakaoService{
     private final String KAUTH_USER_URL_HOST;
 
     @Autowired
+    private AuthTokensGenerator authTokensGenerator;
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -64,6 +66,8 @@ public class KakaoService{
         return userInfo;
     }
     public String getAccessTokenFromKakao(String code) {
+
+
 
         KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri(uriBuilder -> uriBuilder
@@ -110,8 +114,7 @@ public class KakaoService{
             kakaoUser = new User(email,name,nickname);
             userRepository.save(kakaoUser); // 일단 email,name,nickname 세개로 가입 진행
         }
-        // KakaoTokenResponseDto token = AuthTokensGenerator.generate(id);
-
+        KakaoTokenResponseDto token=authTokensGenerator.generate(id);
         return new LoginResponse(id,nickname,email,token);// 여기서부터 다시할것
     }
 
