@@ -1,6 +1,7 @@
 package com.heartfoilo.demo.login.controller;
 
 import com.heartfoilo.demo.login.dto.KakaoUserInfoResponseDto;
+import com.heartfoilo.demo.login.dto.LoginResponse;
 import com.heartfoilo.demo.login.service.KakaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class KakaoLoginController {
 
         KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken); // 토큰 기반으로 유저 정보 가져옴
 
+        LoginResponse KakaoUserResponse = kakaoService.kakaoUserLogin(userInfo);
 
         return new ResponseEntity<>(HttpStatus.OK);
     } // code를 이용해서 accessToken get해오기

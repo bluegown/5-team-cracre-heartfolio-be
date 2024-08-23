@@ -35,7 +35,7 @@ public class KakaoService{
     public KakaoService(@Value("${kakao.client_id}") String clientId){
         this.clientId = clientId;
         KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com";
-        KAUTH_USER_URL_HOST = "https://kapi.kakao.com/v2/user/me";
+        KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
     }
 
     public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
@@ -95,7 +95,7 @@ public class KakaoService{
         return kakaoTokenResponseDto.getAccessToken();
     }
 
-    private LoginResponse kakaoUserLogin(KakaoUserInfoResponseDto kakaoUserInfoResponseDto){
+    public LoginResponse kakaoUserLogin(KakaoUserInfoResponseDto kakaoUserInfoResponseDto){
 
         Long id = kakaoUserInfoResponseDto.getId();
         String email = kakaoUserInfoResponseDto.getKakaoAccount().getEmail();
@@ -109,8 +109,9 @@ public class KakaoService{
             kakaoUser = new User(email,name,nickname);
             userRepository.save(kakaoUser); // 일단 email,name,nickname 세개로 가입 진행
         }
+        KakaoTokenResponseDto kakaoTokenResponseDto =
 
-        return new LoginResponse();// 여기서부터 다시할것
+        return new LoginResponse(id,nickname,email,kakaoTokenResponseDto);// 여기서부터 다시할것
     }
 
 
