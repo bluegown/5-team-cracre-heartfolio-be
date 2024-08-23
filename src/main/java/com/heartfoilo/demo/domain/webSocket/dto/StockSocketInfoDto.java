@@ -12,19 +12,18 @@ import lombok.NoArgsConstructor;
 public class StockSocketInfoDto {
 
     //종목 코드
-    private String SYMB;
+    private String symbol;
 
     //cur_cost 현재가
-    private int LAST;
-
+    private int curPrice;
     //시가
-    private int OPEN;
+    private int openPrice;
 
     //high_cost 최고가
-    private int HIGH;
+    private int highPrice;
 
     //low_cost 최저가
-    private int low_cost;
+    private int lowPrice;
 
     //earningValue 전일대비 수익
     private int earningValue;
@@ -33,3 +32,4 @@ public class StockSocketInfoDto {
     private float earningRate;
 
 }
+
