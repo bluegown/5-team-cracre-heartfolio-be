@@ -24,5 +24,13 @@ public class User {
     @Column(nullable = false, length = 28)
     private String nickname;
 
+    public User(String name,String email,String nickname){
+        this.name = name;
+        this.email = email;
+        this.nickname = nickname;
+    }
+
+
+
     // private String profile;
 }
