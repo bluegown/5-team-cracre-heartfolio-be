@@ -38,7 +38,6 @@ public class LikeServiceImpl implements LikeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.USER_NOT_FOUND));
 
-
         // 새로운 Like 엔티티 생성 및 저장
         Like like = Like.builder()
                 .user(user)
