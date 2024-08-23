@@ -8,6 +8,7 @@ import com.heartfoilo.demo.domain.portfolio.repository.TotalAssetsRepository;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import com.heartfoilo.demo.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class PortfolioServiceImpl implements PortfolioService {
 
 
     private final UserRepository userRepository;
+
+    private final RedisUtil redisUtil;
 
     @Autowired
     private PortfolioRepository portfolioRepository;

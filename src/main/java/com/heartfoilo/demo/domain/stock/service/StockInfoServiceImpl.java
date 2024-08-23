@@ -45,7 +45,7 @@ public class StockInfoServiceImpl {
         Long quantity = totalAssets.getTotalQuantity();
         if(quantity == null){
             quantity = 0L;
-        }
+        } // 예외처리 !!
         Optional<Like> like = likeRepository.findByUserIdAndStockId(stockId,1L);
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
