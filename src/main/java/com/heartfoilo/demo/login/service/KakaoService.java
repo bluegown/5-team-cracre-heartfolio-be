@@ -2,6 +2,7 @@ package com.heartfoilo.demo.login.service;
 
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import com.heartfoilo.demo.login.Generator.AuthTokensGenerator;
 import com.heartfoilo.demo.login.dto.KakaoTokenResponseDto;
 import com.heartfoilo.demo.login.dto.KakaoUserInfoResponseDto;
 import com.heartfoilo.demo.login.dto.LoginResponse;
@@ -109,9 +110,9 @@ public class KakaoService{
             kakaoUser = new User(email,name,nickname);
             userRepository.save(kakaoUser); // 일단 email,name,nickname 세개로 가입 진행
         }
-        KakaoTokenResponseDto kakaoTokenResponseDto =
+        // KakaoTokenResponseDto token = AuthTokensGenerator.generate(id);
 
-        return new LoginResponse(id,nickname,email,kakaoTokenResponseDto);// 여기서부터 다시할것
+        return new LoginResponse(id,nickname,email,token);// 여기서부터 다시할것
     }
 
 

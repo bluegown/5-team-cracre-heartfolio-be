@@ -1,15 +1,19 @@
 package com.heartfoilo.demo.login.Generator;
 
 import com.heartfoilo.demo.login.dto.KakaoTokenResponseDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component
+@RequiredArgsConstructor
 public class AuthTokensGenerator {
     private static final String BEARER_TYPE = "Bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;	//1시간
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일로 설정
 
-     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthTokensGenerator(JwtTokenProvider jwtTokenProvicer) {
         this.jwtTokenProvider = jwtTokenProvicer;
