@@ -23,7 +23,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     private final UserRepository userRepository;
 
-    private final RedisUtil redisUtil;
+
     @Autowired
     private PortfolioRepository portfolioRepository;
 
@@ -54,7 +54,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Override
     public Map<String,Object> getAssets(long userId) { // 보유 자산 조회 API
 
-        User user = userRepository.findById(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
         Optional<Account> accountOpt = portfolioRepository.findById(userId);
 
         Account account = accountOpt.get(); // 꺼내오고
@@ -128,7 +129,7 @@ public class PortfolioServiceImpl implements PortfolioService {
             Long totalPurchasePrice = totalQuantity * purchaseAvgPrice; // 총매수값
 
 
-            redisUtil.getStockInfoTemplate(findStock.getSymbol());
+
             // TODO : REDIS 내에 값이 없는 경우 예외처리 필요 //
 
 

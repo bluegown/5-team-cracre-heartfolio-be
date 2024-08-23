@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("")
+
 public class KakaoLoginController {
 
     private final KakaoService kakaoService;
@@ -25,13 +28,20 @@ public class KakaoLoginController {
     @GetMapping("/oauth")
     public ResponseEntity<?> callback(@RequestParam("code") String code) throws IOException {
 
-        String accessToken = kakaoService.getAccessTokenFromKakao(code);
+        try{
+            // 현재 도메인 확인
+            String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
-        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken); // 토큰 기반으로 유저 정보 가져옴
+            KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken); // 토큰 기반으로 유저 정보 가져옴
 
-        LoginResponse KakaoUserResponse = kakaoService.kakaoUserLogin(userInfo);
+            LoginResponse KakaoUserResponse = kakaoService.kakaoUserLogin(userInfo);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok(KakaoUserResponse);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Item Not Found");
+        }
+    }
+
     } // code를 이용해서 accessToken get해오기
     // 프론트엔드에서 인가코드를 전송받는다
-}
+
