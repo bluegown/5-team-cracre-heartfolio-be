@@ -51,9 +51,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public List<LikeStockResponseDto> getFavorites(Long userId) {
         List<Like> likes = likeRepository.findByUserId(userId);
-        if (likes.isEmpty()) {
-            throw new LikeStockNotFoundException(ErrorMessage.FAVORITE_STOCK_NOT_FOUND);
-        }
+
         return likes.stream()
                 .map(like -> new LikeStockResponseDto(
                         like.getStock().getId(),
