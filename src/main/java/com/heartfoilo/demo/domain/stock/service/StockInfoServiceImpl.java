@@ -45,12 +45,12 @@ public class StockInfoServiceImpl {
         Long quantity = totalAssets.getTotalQuantity();
         if(quantity == null){
             quantity = 0L;
-        }
+        } // 예외처리 !!
         Optional<Like> like = likeRepository.findByUserIdAndStockId(stockId,1L);
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
 
-
+// TODO : 현재가 추가
 
         // GetAmountResponseDto 객체 생성 후 반환
         return new GetAmountResponseDto(symbol, name, quantity,isLikePresent);
