@@ -56,8 +56,8 @@ public class InvestServiceImpl {
 
         Optional<Stock> optionalStock = stockRepository.findById(stockId);
         Stock stock = optionalStock.get();
+        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
 
-        User user = userRepository.findById(1L); // TODO: 임시 조치
 
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
         if (totalAssets == null) {

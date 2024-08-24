@@ -50,7 +50,7 @@ public class StockInfoServiceImpl {
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
 
-
+// TODO : 현재가 추가
 
         // GetAmountResponseDto 객체 생성 후 반환
         return new GetAmountResponseDto(symbol, name, quantity,isLikePresent);
