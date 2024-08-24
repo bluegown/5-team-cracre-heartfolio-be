@@ -3,12 +3,14 @@ package com.heartfoilo.demo.domain.webSocket.handler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
-import com.heartfoilo.demo.util.RedisUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.heartfoilo.demo.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -150,7 +152,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             StockSocketInfoDto stockSocketInfoDto = parseStockData(data);
             redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
             log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSymbol()).getCurPrice());
-            simpMessagingTemplate.convertAndSend("/to/stock/"+stockSocketInfoDto.getSymbol());
+            simpMessagingTemplate.convertAndSend("/from/stock/"+stockSocketInfoDto.getSymbol());
         }
     }
 

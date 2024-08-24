@@ -2,6 +2,7 @@ package com.heartfoilo.demo.login.service;
 
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import com.heartfoilo.demo.login.Generator.AuthTokensGenerator;
 import com.heartfoilo.demo.login.dto.KakaoTokenResponseDto;
 import com.heartfoilo.demo.login.dto.KakaoUserInfoResponseDto;
 import com.heartfoilo.demo.login.dto.LoginResponse;
@@ -16,6 +17,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+
+import java.util.Optional;
 import java.util.Random;
 import java.util.HashMap;
 
@@ -29,13 +32,15 @@ public class KakaoService{
     private final String KAUTH_USER_URL_HOST;
 
     @Autowired
+    private AuthTokensGenerator authTokensGenerator;
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     public KakaoService(@Value("${kakao.client_id}") String clientId){
         this.clientId = clientId;
         KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com";
-        KAUTH_USER_URL_HOST = "https://kapi.kakao.com/v2/user/me";
+        KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
     }
 
     public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
@@ -64,6 +69,8 @@ public class KakaoService{
     }
     public String getAccessTokenFromKakao(String code) {
 
+
+
         KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -82,7 +89,7 @@ public class KakaoService{
                 .bodyToMono(KakaoTokenResponseDto.class)
                 .block();
 
-
+        log.info(code);
         log.info(" [Kakao Service] Access Token ------> {}", kakaoTokenResponseDto.getAccessToken());
         log.info(" [Kakao Service] Refresh Token ------> {}", kakaoTokenResponseDto.getRefreshToken());
         //제공 조건: OpenID Connect가 활성화 된 앱의 토큰 발급 요청인 경우 또는 scope에 openid를 포함한 추가 항목 동의 받기 요청을 거친 토큰 발급 요청인 경우
@@ -95,22 +102,21 @@ public class KakaoService{
         return kakaoTokenResponseDto.getAccessToken();
     }
 
-    private LoginResponse kakaoUserLogin(KakaoUserInfoResponseDto kakaoUserInfoResponseDto){
+    public LoginResponse kakaoUserLogin(KakaoUserInfoResponseDto kakaoUserInfoResponseDto){
 
         Long id = kakaoUserInfoResponseDto.getId();
-        String email = kakaoUserInfoResponseDto.getKakaoAccount().getEmail();
-        String name = kakaoUserInfoResponseDto.getKakaoAccount().getName(); // 일단 본명이긴 한데 이름이긴 함...
+        String name = kakaoUserInfoResponseDto.getKakaoAccount().getProfile().getNickName(); // 일단 본명이긴 한데 이름이긴 함...
         // 닉네임은 랜덤으로 부여해야 함
         Random random = new Random();  // Random 클래스의 인스턴스를 생성합니다.
         String nickname = "사용자" + random.nextInt(99999) + 1;
-        User kakaoUser = userRepository.findByEmail(email);
+        Optional<User> kakaoUser = userRepository.findById(id);
 
-        if(kakaoUser == null){
-            kakaoUser = new User(email,name,nickname);
-            userRepository.save(kakaoUser); // 일단 email,name,nickname 세개로 가입 진행
+        if (!kakaoUser.isPresent()) {
+            User newUser = new User(id,name, nickname);
+            userRepository.save(newUser); // email, name, nickname 세 개로 가입 진행
         }
-
-        return new LoginResponse();// 여기서부터 다시할것
+        KakaoTokenResponseDto token=authTokensGenerator.generate(id);
+        return new LoginResponse(id,nickname,token);// 여기서부터 다시할것
     }
 
 
