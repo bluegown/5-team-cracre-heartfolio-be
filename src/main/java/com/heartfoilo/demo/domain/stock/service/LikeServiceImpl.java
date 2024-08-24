@@ -2,13 +2,17 @@ package com.heartfoilo.demo.domain.stock.service;
 
 import com.heartfoilo.demo.domain.stock.constant.ErrorMessage;
 import com.heartfoilo.demo.domain.stock.dto.responseDto.LikeStockResponseDto;
+import com.heartfoilo.demo.domain.stock.dto.responseDto.PopularStockResponseDto;
 import com.heartfoilo.demo.domain.stock.entity.Like;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
 import com.heartfoilo.demo.global.exception.LikeStockNotFoundException;
+import com.heartfoilo.demo.util.RedisUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +20,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class LikeServiceImpl implements LikeService {
 
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final StockRepository stockRepository;
+    private final RedisUtil redisUtil;
 
-    @Autowired
-    public LikeServiceImpl(LikeRepository likeRepository, UserRepository userRepository, StockRepository stockRepository) {
-        this.likeRepository = likeRepository;
-        this.userRepository = userRepository;
-        this.stockRepository = stockRepository;
-    }
 
     @Override
     public Like addFavorite(Long userId, Long stockId) {
@@ -52,15 +52,27 @@ public class LikeServiceImpl implements LikeService {
         List<Like> likes = likeRepository.findByUserId(userId);
 
         return likes.stream()
-                .map(like -> new LikeStockResponseDto(
-                        like.getStock().getId(),
-                        like.getStock().getName(),
-                        //FIXME: 웹 소켓 연동되면 값 변경하기
-                        12000, //현재가
-                        1, //전일 대비 수익
-                        12.0f //수익률
-                ))
-                .collect(Collectors.toList());
+                .map(like -> {
+                    int curPrice = 0;
+                    int earningValue = 0;
+                    float earningRate = 0;
+                    //TODO: Redis연결 실패했을 때 예외처리
+                    if (redisUtil.hasKeyStockInfo(like.getStock().getSymbol())) {
+                        StockSocketInfoDto stockInfo = redisUtil.getStockInfoTemplate(like.getStock().getSymbol());
+                        curPrice = stockInfo.getCurPrice();
+                        earningValue = stockInfo.getEarningValue();
+                        earningRate = stockInfo.getEarningRate();
+                    }
+
+                    return new LikeStockResponseDto(
+                            like.getStock().getId(),
+                            like.getStock().getEnglishName(),
+                            curPrice,
+                            earningValue,
+                            earningRate,
+                            like.getStock().getSector()
+                    );
+                }).collect(Collectors.toList());
     }
 
     @Override

@@ -7,7 +7,11 @@ import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.stock.entity.Like;
 import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
+
 import com.heartfoilo.demo.domain.user.entity.User;
+
+import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
+
 import com.heartfoilo.demo.global.exception.StockNotFoundException;
 import com.heartfoilo.demo.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class StockInfoServiceImpl {
+public class StockInfoServiceImpl implements StockInfoService {
 
     @Autowired
     private StockRepository stockRepository;
@@ -26,6 +30,9 @@ public class StockInfoServiceImpl {
     private TotalAssetsRepository totalAssetsRepository;
     @Autowired
     private LikeRepository likeRepository;
+    @Autowired
+    private RedisUtil redisUtil;
+
     public GetAmountResponseDto getInfo(long stockId) {
 
 
@@ -38,7 +45,7 @@ public class StockInfoServiceImpl {
 
         // symbol과 name 값을 가져옴
         String symbol = stock.getSymbol();
-        String name = stock.getName();
+        String name = stock.getEnglishName();
 
         // stockId로 TotalAssets를 조회
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
@@ -56,13 +63,20 @@ public class StockInfoServiceImpl {
         if(quantity == null){
             quantity = 0L;
         } // 예외처리 !!
-        Optional<Like> like = likeRepository.findByUserIdAndStockId(stockId,1L);
+        Optional<Like> like = likeRepository.findByUserIdAndStockId(1L,stockId);
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
 
-// TODO : 현재가 추가 , favorites에 반영 필요
+
+        // TODO : 현재가 추가
+        int curPrice= 0;
+        if (redisUtil.hasKeyStockInfo(stock.getSymbol())) {
+            StockSocketInfoDto stockInfo = redisUtil.getStockInfoTemplate(stock.getSymbol());
+            curPrice = stockInfo.getCurPrice();
+        }
+
 
         // GetAmountResponseDto 객체 생성 후 반환
-        return new GetAmountResponseDto(symbol, name, quantity,isLikePresent);
+        return new GetAmountResponseDto(symbol, name, quantity, curPrice, isLikePresent);
     }
 }

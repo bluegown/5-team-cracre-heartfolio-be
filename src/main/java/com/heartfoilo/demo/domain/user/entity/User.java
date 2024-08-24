@@ -11,7 +11,7 @@ import lombok.*;
 public class User {
 
     @Id
-    @Column(name = "user_id",nullable = false)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false, length = 28)
@@ -20,6 +20,12 @@ public class User {
 
     @Column(nullable = false, length = 28)
     private String nickname;
+
+
+    public User(String name,String nickname){
+        this.name = name;
+        this.nickname = nickname;
+    }
 
 
 
