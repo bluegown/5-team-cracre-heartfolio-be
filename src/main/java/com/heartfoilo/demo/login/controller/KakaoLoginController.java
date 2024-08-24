@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-
+@RequestMapping("")
 public class KakaoLoginController {
 
     private final KakaoService kakaoService;
