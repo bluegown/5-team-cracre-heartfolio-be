@@ -1,8 +1,11 @@
 package com.heartfoilo.demo.domain.stock.api;
 
+import com.heartfoilo.demo.domain.stock.dto.responseDto.GetAmountResponseDto;
 import com.heartfoilo.demo.domain.stock.dto.responseDto.OrderHistoryResponseDto;
 import com.heartfoilo.demo.domain.stock.dto.responseDto.StockSearchResponseDto;
 import com.heartfoilo.demo.domain.stock.service.OrderService;
+import com.heartfoilo.demo.domain.stock.service.StockInfoService;
+import com.heartfoilo.demo.domain.stock.service.StockInfoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final StockInfoService stockInfoService;
 
     @GetMapping("/{stockId}/order")
     public ResponseEntity<List<OrderHistoryResponseDto>> getOrderHistory(@PathVariable("stockId") Long stockId) {
@@ -29,5 +33,10 @@ public class OrderController {
     public ResponseEntity<List<StockSearchResponseDto>> searchStocks(@RequestParam("keyword") String keyword) {
         List<StockSearchResponseDto> results = orderService.getStockSearch(keyword);
         return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/{stock_id}") // 보유 자산 조회 API
+    public GetAmountResponseDto getStockInfo(@PathVariable("stock_id") long stockId){
+        return stockInfoService.getInfo(stockId);
     }
 }
