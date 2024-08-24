@@ -33,7 +33,7 @@ public class JwtTokenProvider {
 
     public String accessTokenGenerate(String subject, Date expiredAt) {
         return Jwts.builder()
-                .setSubject(subject)	//uid
+                .setSubject(subject)	//id
                 .setExpiration(expiredAt)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();

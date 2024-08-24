@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(heartfolioInterceptor)
-                .addPathPatterns("/api/stock/**","/api/portfolio/**"); // TODO: 여기 링크 검토필요 !!
+                .addPathPatterns("/api/portfolio/**"); // TODO: 여기 링크 검토필요 !!
 
     }
 

@@ -7,7 +7,9 @@ import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.stock.entity.Like;
 import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
+import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.global.exception.StockNotFoundException;
+import com.heartfoilo.demo.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +27,14 @@ public class StockInfoServiceImpl {
     @Autowired
     private LikeRepository likeRepository;
     public GetAmountResponseDto getInfo(long stockId) {
+
+
         // stockId로 Stock을 조회
         Stock stock = stockRepository.findById(stockId);
         if (stock == null) {
             throw new StockNotFoundException("Stock with ID " + stockId + " not found");
         }
+
 
         // symbol과 name 값을 가져옴
         String symbol = stock.getSymbol();
@@ -38,7 +43,12 @@ public class StockInfoServiceImpl {
         // stockId로 TotalAssets를 조회
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
         if (totalAssets == null) {
-            throw new StockNotFoundException("Stock with ID " + stockId + " not found");
+            totalAssets = new TotalAssets();
+            totalAssets.setTotalQuantity(0L);
+            totalAssets.setPurchaseAvgPrice(0L);
+            totalAssets.setId(stockId);
+            // totalAssets.setUser() // TODO: 여기서부터 계속 진행
+
         }
 
         // 총량을 가져옴
@@ -50,7 +60,7 @@ public class StockInfoServiceImpl {
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
 
-// TODO : 현재가 추가
+// TODO : 현재가 추가 , favorites에 반영 필요
 
         // GetAmountResponseDto 객체 생성 후 반환
         return new GetAmountResponseDto(symbol, name, quantity,isLikePresent);

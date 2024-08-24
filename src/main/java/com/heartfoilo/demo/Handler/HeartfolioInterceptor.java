@@ -1,5 +1,7 @@
 package com.heartfoilo.demo.Handler;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,25 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
             return false; // 토큰 존재하지 않을시 요청에 대한 응답이 false가 나온다
         }
+        token = token.substring(7);
+
+        try {
+            // JWT 토큰을 파싱하여 클레임(Claims) 추출
+            Claims claims = Jwts.parser()
+                    .setSigningKey("${spring.custom.jwt.secretkey}".getBytes())  // secretKey를 사용해 서명 검증
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // 클레임에서 userId 추출
+            String userId = claims.get("id", String.class);
+
+            // 추출한 userId를 요청의 속성(attribute)으로 저장
+            request.setAttribute("userId", userId);
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+            return false;
+        }
+
         return true; // true를 반환하면 다음으로 진행, false면 진행 중단
     }
 
