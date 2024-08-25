@@ -25,7 +25,7 @@ public class KakaoLoginController {
 
     private final KakaoService kakaoService;
 
-    @GetMapping("/kakao/login")
+    @GetMapping("/oauth")
     public ResponseEntity<?> callback(@RequestParam("code") String code) throws IOException {
 
         try{
