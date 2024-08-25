@@ -36,7 +36,7 @@ public class KakaoLoginController {
 
             LoginResponse KakaoUserResponse = kakaoService.kakaoUserLogin(userInfo);
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok(KakaoUserResponse);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Item Not Found");
         }
