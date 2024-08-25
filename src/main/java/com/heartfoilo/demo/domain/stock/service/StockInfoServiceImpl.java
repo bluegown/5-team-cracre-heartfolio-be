@@ -49,20 +49,14 @@ public class StockInfoServiceImpl implements StockInfoService {
 
         // stockId로 TotalAssets를 조회
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
+        Long quantity;
         if (totalAssets == null) {
-            totalAssets = new TotalAssets();
-            totalAssets.setTotalQuantity(0L);
-            totalAssets.setPurchaseAvgPrice(0L);
-            totalAssets.setId(stockId);
-            // totalAssets.setUser() // TODO: 여기서부터 계속 진행
-
+            quantity = 0L;
+        } else {
+            quantity = totalAssets.getTotalQuantity();
         }
 
-        // 총량을 가져옴
-        Long quantity = totalAssets.getTotalQuantity();
-        if(quantity == null){
-            quantity = 0L;
-        } // 예외처리 !!
+         // 예외처리 !!
         Optional<Like> like = likeRepository.findByUserIdAndStockId(1L,stockId);
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
