@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("")
+
 public class KakaoLoginController {
 
     private final KakaoService kakaoService;
@@ -35,12 +35,11 @@ public class KakaoLoginController {
 
             LoginResponse KakaoUserResponse = kakaoService.kakaoUserLogin(userInfo);
 
-            return ResponseEntity.ok(KakaoUserResponse);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Item Not Found");
         }
     }
 
-    } // code를 이용해서 accessToken get해오기
-    // 프론트엔드에서 인가코드를 전송받는다
-
+} // code를 이용해서 accessToken get해오기
+// 프론트엔드에서 인가코드를 전송받는다
