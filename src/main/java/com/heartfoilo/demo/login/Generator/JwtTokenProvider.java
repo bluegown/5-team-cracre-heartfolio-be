@@ -17,11 +17,9 @@ import java.security.Key;
 @Component
 public class JwtTokenProvider {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
-
-
     private SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 적절한 크기의 키 생성
+
+
 
         public String accessTokenGenerate(String subject) {
             return Jwts.builder()
@@ -33,7 +31,7 @@ public class JwtTokenProvider {
 
     public String accessTokenGenerate(String subject, Date expiredAt) {
         return Jwts.builder()
-                .setSubject(subject)	//uid
+                .setSubject(subject)	//id
                 .setExpiration(expiredAt)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();

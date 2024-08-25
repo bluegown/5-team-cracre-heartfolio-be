@@ -10,13 +10,18 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@RequiredArgsConstructor
 public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, Object> redisBlackListTemplate;
     private final RedisTemplate<String, Object> stockInfoTemplate;
-
+    public RedisUtil(RedisTemplate<String, Object> redisTemplate,
+                     RedisTemplate<String, Object> redisBlackListTemplate,
+                     RedisTemplate<String, Object> stockInfoTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.redisBlackListTemplate = redisBlackListTemplate;
+        this.stockInfoTemplate = stockInfoTemplate;
+    }
 //    @Value("${jwt.expmin}")
     private int expMin;
 
