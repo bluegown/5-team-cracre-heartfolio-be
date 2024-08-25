@@ -77,7 +77,7 @@ public class KakaoService{
                         .path("/oauth/token")
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", clientId)
-                        .queryParam("redirect_uri", "https://localhost:8080/oauth")
+                        .queryParam("redirect_uri", "https://heartfolio.site/oauth")
                         .queryParam("code", code)
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
