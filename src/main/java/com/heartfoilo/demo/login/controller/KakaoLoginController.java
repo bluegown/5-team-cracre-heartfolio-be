@@ -42,6 +42,5 @@ public class KakaoLoginController {
         }
     }
 
-    } // code를 이용해서 accessToken get해오기
-    // 프론트엔드에서 인가코드를 전송받는다
-
+} // code를 이용해서 accessToken get해오기
+// 프론트엔드에서 인가코드를 전송받는다

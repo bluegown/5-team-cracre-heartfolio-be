@@ -2,6 +2,7 @@ package com.heartfoilo.demo.config;
 
 import com.heartfoilo.demo.domain.webSocket.handler.WebSocketClientHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.WebSocketConnectionManager;
@@ -17,6 +18,8 @@ public class WebSocketClientConfig implements WebSocketConfigurer {
 
     private static final String URL = "ws://ops.koreainvestment.com:31000";
     private final WebSocketClientHandler webSocketClientHandler;
+
+
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
