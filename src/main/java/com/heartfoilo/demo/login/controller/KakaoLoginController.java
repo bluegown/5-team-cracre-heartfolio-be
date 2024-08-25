@@ -39,7 +39,7 @@ public class KakaoLoginController {
 
 
             // JSON으로 직렬화되어 반환됨
-            return ResponseEntity.ok(kakaoUserResponse.getToken().getAccessToken());
+            return ResponseEntity.ok(kakaoUserResponse);
             // 반환
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item Not Found");
