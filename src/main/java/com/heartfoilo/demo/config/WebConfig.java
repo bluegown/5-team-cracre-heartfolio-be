@@ -21,11 +21,6 @@ public class WebConfig implements WebMvcConfigurer {
             .allowCredentials(false)
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH");
     }
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(heartfolioInterceptor)
-                .addPathPatterns("/api/portfolio/**"); // TODO: 여기 링크 검토필요 !!
 
-    }
 
 }
