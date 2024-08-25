@@ -22,5 +22,9 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH");
     }
 
-
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(heartfolioInterceptor)
+                .addPathPatterns("/api/stock/favorites/**"); // Interceptor가 적용될 경로를 지정
+    }
 }
