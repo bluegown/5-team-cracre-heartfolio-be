@@ -40,7 +40,7 @@ public class KakaoLoginController {
 
             // JWT 토큰을 Authorization 헤더에 추가
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoUserResponse);
+            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoUserResponse.getToken().getAccessToken());
 
             // JWT 토큰을 포함한 헤더와 함께 빈 본문으로 응답 반환
             return new ResponseEntity<>(null, headers, HttpStatus.OK);
