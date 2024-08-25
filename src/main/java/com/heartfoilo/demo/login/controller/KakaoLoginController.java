@@ -26,7 +26,7 @@ public class KakaoLoginController {
 
     private final KakaoService kakaoService;
     @GetMapping("/oauth")
-    public ResponseEntity<LoginResponse> callback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> callback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         try {
             // 인가 코드를 사용하여 액세스 토큰을 가져옴
             String accessToken = kakaoService.getAccessTokenFromKakao(code);
@@ -37,8 +37,10 @@ public class KakaoLoginController {
             // 사용자 정보로 로그인 처리 및 LoginResponse 객체 생성
             LoginResponse kakaoUserResponse = kakaoService.kakaoUserLogin(userInfo);
 
+
             // JSON으로 직렬화되어 반환됨
-            return ResponseEntity.ok(kakaoUserResponse);
+            return ResponseEntity.ok(kakaoUserResponse.getToken().getAccessToken());
+            // 반환
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item Not Found");
         }
