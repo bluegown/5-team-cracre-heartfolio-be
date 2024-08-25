@@ -7,7 +7,11 @@ import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.stock.entity.Like;
 import com.heartfoilo.demo.domain.stock.repository.LikeRepository;
 import com.heartfoilo.demo.domain.stock.repository.StockRepository;
+
+import com.heartfoilo.demo.domain.user.entity.User;
+
 import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
+
 import com.heartfoilo.demo.global.exception.StockNotFoundException;
 import com.heartfoilo.demo.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +34,14 @@ public class StockInfoServiceImpl implements StockInfoService {
     private RedisUtil redisUtil;
 
     public GetAmountResponseDto getInfo(long stockId) {
+
+
         // stockId로 Stock을 조회
         Stock stock = stockRepository.findById(stockId);
         if (stock == null) {
             throw new StockNotFoundException("Stock with ID " + stockId + " not found");
         }
+
 
         // symbol과 name 값을 가져옴
         String symbol = stock.getSymbol();
@@ -54,12 +61,14 @@ public class StockInfoServiceImpl implements StockInfoService {
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
 
+
         // TODO : 현재가 추가
         int curPrice= 0;
         if (redisUtil.hasKeyStockInfo(stock.getSymbol())) {
             StockSocketInfoDto stockInfo = redisUtil.getStockInfoTemplate(stock.getSymbol());
             curPrice = stockInfo.getCurPrice();
         }
+
 
         // GetAmountResponseDto 객체 생성 후 반환
         return new GetAmountResponseDto(symbol, name, quantity, curPrice, isLikePresent);
