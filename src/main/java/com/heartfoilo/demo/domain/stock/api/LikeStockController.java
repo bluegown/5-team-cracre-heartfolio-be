@@ -33,6 +33,9 @@ public class LikeStockController {
     @GetMapping
     public ResponseEntity<List<LikeStockResponseDto>> getFavorite(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).build(); // Unauthorized 처리
+        }
         List<LikeStockResponseDto> favorites = likeService.getFavorites(userId);
         return ResponseEntity.ok(favorites);
     }
@@ -40,6 +43,9 @@ public class LikeStockController {
     @DeleteMapping("/{stockId}")
     public ResponseEntity<Void> removeFavorite(@PathVariable("stockId") Long stockId, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).build(); // Unauthorized 처리
+        }
         likeService.removeFavorite(userId, stockId);
         return ResponseEntity.ok().build();
     }
