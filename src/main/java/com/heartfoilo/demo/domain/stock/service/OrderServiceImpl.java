@@ -24,8 +24,8 @@ public class OrderServiceImpl implements OrderService {
     private final StockRepository stockRepository;
 
     @Override
-    public List<OrderHistoryResponseDto> getOrderHistory(Long userId, Long stockId) {
-        List<Order> orders = orderRepository.findByStockIdAndUserId(stockId, userId);
+    public List<OrderHistoryResponseDto> getOrderHistory(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
 
         return orders.stream()
                 .map(order -> new OrderHistoryResponseDto(

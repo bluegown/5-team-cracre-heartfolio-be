@@ -6,6 +6,6 @@ import com.heartfoilo.demo.domain.stock.dto.responseDto.StockSearchResponseDto;
 import java.util.List;
 
 public interface  OrderService {
-    List<OrderHistoryResponseDto> getOrderHistory(Long userId, Long stockId);
+    List<OrderHistoryResponseDto> getOrderHistory(Long userId);
     List<StockSearchResponseDto> getStockSearch(String keyword);
 }
