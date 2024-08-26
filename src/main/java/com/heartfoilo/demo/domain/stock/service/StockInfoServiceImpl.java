@@ -33,7 +33,7 @@ public class StockInfoServiceImpl implements StockInfoService {
     @Autowired
     private RedisUtil redisUtil;
 
-    public GetAmountResponseDto getInfo(long stockId) {
+    public GetAmountResponseDto getInfo(long userId, long stockId) {
 
 
         // stockId로 Stock을 조회
@@ -57,7 +57,7 @@ public class StockInfoServiceImpl implements StockInfoService {
         }
 
          // 예외처리 !!
-        Optional<Like> like = likeRepository.findByUserIdAndStockId(1L,stockId);
+        Optional<Like> like = likeRepository.findByUserIdAndStockId(userId ,stockId);
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
 
