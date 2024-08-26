@@ -17,11 +17,7 @@ import java.security.Key;
 @Component
 public class JwtTokenProvider {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final Key key;
-    public JwtTokenProvider(@Value("${custom.jwt.secretKey}") String secretKey) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
+    private SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 적절한 크기의 키 생성
 
 
 
