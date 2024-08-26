@@ -16,26 +16,28 @@ import java.security.Key;
 
 @Component
 public class JwtTokenProvider {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 적절한 크기의 키 생성
+    private final Key key;
 
+    public JwtTokenProvider(@Value("${spring.custom.jwt.secretkey}") String secretKey) {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes); // HS512에 적합한 키로 변환
+    }
 
-
-        public String accessTokenGenerate(String subject) {
-            return Jwts.builder()
-                    .setSubject(subject)
-                    .signWith(key) // HS512에 적합한 키로 서명
-                    .compact();
-
+    public String accessTokenGenerate(String subject) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
     }
 
     public String accessTokenGenerate(String subject, Date expiredAt) {
         return Jwts.builder()
-                .setSubject(subject)	//id
+                .setSubject(subject)
                 .setExpiration(expiredAt)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
+
     public String refreshTokenGenerate(Date expiredAt) {
         return Jwts.builder()
                 .setExpiration(expiredAt)
