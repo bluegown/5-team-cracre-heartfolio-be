@@ -48,6 +48,7 @@ public class OrderController {
             getAmountResponseDto =  stockInfoService.getInfoNoUser(stockId);
         } else {
             Long userId = Long.parseLong(userStrId);
+
             getAmountResponseDto =  stockInfoService.getInfo(userId, stockId);
         }
 
