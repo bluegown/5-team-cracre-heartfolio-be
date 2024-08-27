@@ -61,7 +61,7 @@ public class RedisUtil {
 
     public void setStockInfoTemplate(String key, Object o) {
         stockInfoTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
-        stockInfoTemplate.opsForValue().set(key, o, 1440, TimeUnit.MINUTES);
+        stockInfoTemplate.opsForValue().set(key, o, 4320, TimeUnit.MINUTES);
     }
 
     public StockSocketInfoDto getStockInfoTemplate(String key) {

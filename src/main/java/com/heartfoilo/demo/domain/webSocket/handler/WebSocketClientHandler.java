@@ -68,6 +68,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         throws Exception {
         String s = message.getPayload().toString();
         handleData(s);
+        System.out.println("s :"+s);
 //        getData(s);
 
     }
