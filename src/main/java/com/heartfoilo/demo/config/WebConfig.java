@@ -10,8 +10,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
+
     private HeartfolioInterceptor heartfolioInterceptor;
+    public WebConfig(HeartfolioInterceptor heartfolioInterceptor) {
+        this.heartfolioInterceptor = heartfolioInterceptor;
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -25,6 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(heartfolioInterceptor)
-                .addPathPatterns("/api/stock/favorites/**"); // Interceptor가 적용될 경로를 지정
+                .addPathPatterns("/api/stock/favorites/**", "/api/stock/order/**"); // Interceptor가 적용될 경로를 지정
     }
 }

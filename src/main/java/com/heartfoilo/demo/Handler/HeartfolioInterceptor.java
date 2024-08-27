@@ -1,53 +1,55 @@
 package com.heartfoilo.demo.Handler;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import java.security.Key;
 
-@NoArgsConstructor
 @Component
 public class HeartfolioInterceptor implements HandlerInterceptor {
+    private final Key key;
+
+    public HeartfolioInterceptor(@Value("${spring.custom.jwt.secretkey}") String secretKey) {
+        byte[] keyBytes = io.jsonwebtoken.io.Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes); // JwtTokenProvider와 동일한 방식으로 Key 생성
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 요청 전에 수행할 로직
         String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
-            return false; // 토큰 존재하지 않을시 요청에 대한 응답이 false가 나온다
+            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+            return true;
         }
         token = token.substring(7);
 
         try {
-            // JWT 토큰을 파싱하여 클레임(Claims) 추출
-            Claims claims = Jwts.parser()
-                    .setSigningKey("${spring.custom.jwt.secretkey}".getBytes())  // secretKey를 사용해 서명 검증
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
                     .parseClaimsJws(token)
                     .getBody();
 
-            // 클레임에서 userId 추출
-            String userId = claims.get("id", String.class);
-
-            // 추출한 userId를 요청의 속성(attribute)으로 저장
+            String userId = claims.getSubject(); // 이렇게 해야 id값이 불러져온다
             request.setAttribute("userId", userId);
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
             return false;
         }
 
-        return true; // true를 반환하면 다음으로 진행, false면 진행 중단
+        return true;
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        // 컨트롤러에서 처리 후, 뷰가 렌더링되기 전에 수행할 로직
-    }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        // 뷰가 렌더링된 후에 수행할 로직
-    }}
+    // other methods...
+}
