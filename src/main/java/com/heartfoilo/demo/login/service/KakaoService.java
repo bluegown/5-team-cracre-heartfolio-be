@@ -110,12 +110,16 @@ public class KakaoService{
         String name = kakaoUserInfoResponseDto.getKakaoAccount().getProfile().getNickName(); // 일단 본명이긴 한데 이름이긴 함...
         // 닉네임은 랜덤으로 부여해야 함
         Random random = new Random();  // Random 클래스의 인스턴스를 생성합니다.
-        String nickname = "사용자" + random.nextInt(99999) + 1;
+
         Optional<User> kakaoUser = userRepository.findById(id);
 
+        String nickname = "사용자" + random.nextInt(99999) + 1;
         if (!kakaoUser.isPresent()) {
             User newUser = new User(id,name, nickname);
             userRepository.save(newUser); // email, name, nickname 세 개로 가입 진행
+        }
+        else{
+            nickname = kakaoUser.get().getNickname();
         }
         KakaoTokenResponseDto token=authTokensGenerator.generate(id);
         return new LoginResponse(id,nickname,token);// 여기서부터 다시할것
