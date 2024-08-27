@@ -68,8 +68,6 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         throws Exception {
         String s = message.getPayload().toString();
         handleData(s);
-        System.out.println("s :"+s);
-//        getData(s);
 
     }
 
@@ -153,7 +151,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             StockSocketInfoDto stockSocketInfoDto = parseStockData(data);
             redisUtil.setStockInfoTemplate(stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
             log.info("redis :현재가 "+ redisUtil.getStockInfoTemplate(stockSocketInfoDto.getSymbol()).getCurPrice());
-            simpMessagingTemplate.convertAndSend("/from/stock/"+stockSocketInfoDto.getSymbol());
+            simpMessagingTemplate.convertAndSend("/from/stock/"+stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
         }
     }
 
