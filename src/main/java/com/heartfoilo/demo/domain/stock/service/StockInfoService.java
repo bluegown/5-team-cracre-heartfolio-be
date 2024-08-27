@@ -6,4 +6,5 @@ import java.util.Map;
 
 public interface StockInfoService {
     public GetAmountResponseDto getInfo(long userId, long stockId);
+    public GetAmountResponseDto getInfoNoUser(long stockId);
 }
