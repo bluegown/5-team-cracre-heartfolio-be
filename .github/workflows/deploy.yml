@@ -13,6 +13,7 @@ jobs:
       - name: Checkout-source code
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
           submodules: true  # 서브모듈도 가져옵니다
 
       # 서브모듈의 파일을 resources 디렉토리에 복사
