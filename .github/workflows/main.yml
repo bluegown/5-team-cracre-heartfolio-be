@@ -1,0 +1,56 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  backend-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 서브모듈 포함하여 소스 코드 체크아웃
+      - name: Checkout source code and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: true  # 서브모듈도 함께 체크아웃
+
+      # 2. 서브모듈 파일을 특정 디렉토리로 복사
+      - name: Copy submodule files to resources
+        run: cp -r ./secrets/* src/main/resources/
+
+      # 3. Gradle 실행권한 부여
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      # 4. Spring boot application 빌드
+      - name: Build with gradle
+        run: ./gradlew clean build
+
+      # 5. Docker 이미지 빌드
+      - name: Build docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/heartfolio_b:0.0.1 .
+
+      # 6. Docker Hub 로그인
+      - name: Login docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      # 7. Docker Hub에 이미지 푸시
+      - name: Publish to docker hub
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/heartfolio_b:0.0.1
+
+      # 8. WAS 인스턴스 접속 및 애플리케이션 실행
+      - name: Connect to WAS & Execute Application
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.WAS_HOST }}
+          username: ${{ secrets.WAS_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker stop backend
+            docker rm backend
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/heartfolio_b:0.0.1
+            docker run -d -p 8080:8080 --name backend ${{ secrets.DOCKER_HUB_USERNAME }}/heartfolio_b:0.0.1
