@@ -20,33 +20,33 @@ public class LikeStockController {
     @PostMapping("/{stockId}")
     public ResponseEntity<Void> addFavorite(@PathVariable("stockId") Long stockId, HttpServletRequest request) {
         // Interceptor에서 설정한 userId 속성을 가져옴
-        Long userId = (Long) request.getAttribute("userId");
+        String userId = (String) request.getAttribute("userId");
 
         if (userId == null) {
             return ResponseEntity.status(401).build(); // Unauthorized 처리
         }
 
-        likeService.addFavorite(userId, stockId);
+        likeService.addFavorite(Long.valueOf(userId), stockId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<List<LikeStockResponseDto>> getFavorite(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
+        String userId = (String) request.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(401).build(); // Unauthorized 처리
         }
-        List<LikeStockResponseDto> favorites = likeService.getFavorites(userId);
+        List<LikeStockResponseDto> favorites = likeService.getFavorites(Long.valueOf(userId));
         return ResponseEntity.ok(favorites);
     }
 
     @DeleteMapping("/{stockId}")
     public ResponseEntity<Void> removeFavorite(@PathVariable("stockId") Long stockId, HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
+        String userId = (String) request.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(401).build(); // Unauthorized 처리
         }
-        likeService.removeFavorite(userId, stockId);
+        likeService.removeFavorite(Long.valueOf(userId), stockId);
         return ResponseEntity.ok().build();
     }
 }
