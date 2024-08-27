@@ -57,9 +57,38 @@ public class StockInfoServiceImpl implements StockInfoService {
         }
 
          // 예외처리 !!
-        Optional<Like> like = likeRepository.findByUserIdAndStockId(userId ,stockId);
+        Optional<Like> like = likeRepository.findByUserIdAndStockId(userId,stockId);
         // TODO: userId 수정
         boolean isLikePresent = like.isPresent();
+
+
+        // TODO : 현재가 추가
+        int curPrice= 0;
+        if (redisUtil.hasKeyStockInfo(stock.getSymbol())) {
+            StockSocketInfoDto stockInfo = redisUtil.getStockInfoTemplate(stock.getSymbol());
+            curPrice = stockInfo.getCurPrice();
+        }
+
+
+        // GetAmountResponseDto 객체 생성 후 반환
+        return new GetAmountResponseDto(symbol, name, quantity, curPrice, isLikePresent);
+    }
+    public GetAmountResponseDto getInfoNoUser (long stockId) {
+
+
+        // stockId로 Stock을 조회
+        Stock stock = stockRepository.findById(stockId);
+        if (stock == null) {
+            throw new StockNotFoundException("Stock with ID " + stockId + " not found");
+        }
+
+
+        // symbol과 name 값을 가져옴
+        String symbol = stock.getSymbol();
+        String name = stock.getEnglishName();
+
+        Long quantity = 0L;
+        boolean isLikePresent = false;
 
 
         // TODO : 현재가 추가
