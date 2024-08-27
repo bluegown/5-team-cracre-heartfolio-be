@@ -20,6 +20,12 @@ jobs:
       - name: Copy submodule files to resources
         run: cp -r secrets/* src/main/resources/
 
+      - name: setup jdk 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
       # Gradle 실행권한 부여
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
