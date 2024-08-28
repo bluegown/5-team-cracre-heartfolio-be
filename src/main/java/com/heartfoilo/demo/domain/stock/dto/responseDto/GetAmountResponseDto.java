@@ -9,10 +9,10 @@ import lombok.Data;
 public class GetAmountResponseDto {
 
     private String symbol;
-    private String name;
+    private String koreanName;
+    private String englishName;
     private Long amount;
     private Integer curPrice;
     private boolean isLikePresent;
-
 
 }
