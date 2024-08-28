@@ -47,6 +47,7 @@ public class PopularStockServiceImpl implements PopularStockService{
                     return new PopularStockResponseDto(
                             stock.getId(),
                             rankCounter.getAndIncrement(), // 순위
+                            stock.getName(),
                             stock.getEnglishName(),
                             curPrice, // 현재가
                             earningValue,
