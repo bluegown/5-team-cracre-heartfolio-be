@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +38,12 @@ public class LikeServiceImpl implements LikeService {
         // 사용자 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.USER_NOT_FOUND));
-
+        //테이블에 존재하는지 확인
+        Optional<Like> existingLike = likeRepository.findByUserIdAndStockId(userId, stockId);
+        if (existingLike.isPresent()) {
+            // 이미 존재하는 경우, 그대로 반환
+            return existingLike.get();
+        }
         // 새로운 Like 엔티티 생성 및 저장
         Like like = Like.builder()
                 .user(user)
