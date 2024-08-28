@@ -66,6 +66,7 @@ public class LikeServiceImpl implements LikeService {
 
                     return new LikeStockResponseDto(
                             like.getStock().getId(),
+                            like.getStock().getName(),
                             like.getStock().getEnglishName(),
                             curPrice,
                             earningValue,
