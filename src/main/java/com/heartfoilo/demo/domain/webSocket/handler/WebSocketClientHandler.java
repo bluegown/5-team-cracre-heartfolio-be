@@ -3,18 +3,16 @@ package com.heartfoilo.demo.domain.webSocket.handler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
-
+import com.heartfoilo.demo.util.RedisUtil;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.heartfoilo.demo.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.messaging.converter.SimpleMessageConverter;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -50,15 +48,21 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         header.put("tr_type", "1");
         header.put("content-type", "utf-8");
 
-//        input.put("tr_id", "H0STCNT0");
-        input.put("tr_id", "HDFSCNT0");
-        input.put("tr_key", "DNASAAPL");
-//        input.put("tr_key", "000020");
         body.put("input", input);
         request.put("header", header);
         request.put("body", body);
-
-        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
+        List<String> stocks = List.of(
+            "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "BRK.B", "NVDA", "JPM", "JNJ", "V",
+            "WMT", "PG", "UNH", "DIS", "MA", "HD", "PYPL", "BAC", "VZ", "ADBE",
+            "CMCSA", "NFLX", "PFE", "KO", "PEP", "MRK", "INTC", "T", "ABBV", "XOM",
+            "CVX", "CSCO", "MCD", "NKE", "ABT", "WFC", "LLY", "DHR", "CRM", "ORCL",
+            "ACN", "MDT", "LIN"
+        );
+        for (String stock : stocks) {
+            input.put("tr_id", "HDFSCNT0");
+            input.put("tr_key", "DNAS"+stock);
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
+        }
     }
 
 
