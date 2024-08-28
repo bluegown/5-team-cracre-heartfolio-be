@@ -44,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
         return stocks.stream()
                 .map(stock -> new StockSearchResponseDto(
                         stock.getId(),
+                        stock.getName(),
                         stock.getEnglishName()
                 )).collect(Collectors.toList());
     }

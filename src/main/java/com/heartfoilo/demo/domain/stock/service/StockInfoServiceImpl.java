@@ -45,16 +45,14 @@ public class StockInfoServiceImpl implements StockInfoService {
 
         // symbol과 name 값을 가져옴
         String symbol = stock.getSymbol();
-        String name = stock.getEnglishName();
+        String koreanName = stock.getName();
+        String englishName = stock.getEnglishName();
 
         // stockId로 TotalAssets를 조회
-        TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
-        Long quantity;
-        if (totalAssets == null) {
-            quantity = 0L;
-        } else {
-            quantity = totalAssets.getTotalQuantity();
-        }
+        Optional<TotalAssets> totalAssets = totalAssetsRepository.findByUserIdAndStockId(userId, stockId);
+        Long quantity = totalAssets
+                .map(TotalAssets::getTotalQuantity)
+                .orElse(0L);
 
          // 예외처리 !!
         Optional<Like> like = likeRepository.findByUserIdAndStockId(userId,stockId);
@@ -71,7 +69,7 @@ public class StockInfoServiceImpl implements StockInfoService {
 
 
         // GetAmountResponseDto 객체 생성 후 반환
-        return new GetAmountResponseDto(symbol, name, quantity, curPrice, isLikePresent);
+        return new GetAmountResponseDto(symbol, koreanName, englishName, quantity, curPrice, isLikePresent);
     }
     public GetAmountResponseDto getInfoNoUser (long stockId) {
 
@@ -85,7 +83,8 @@ public class StockInfoServiceImpl implements StockInfoService {
 
         // symbol과 name 값을 가져옴
         String symbol = stock.getSymbol();
-        String name = stock.getEnglishName();
+        String koreaName = stock.getName();
+        String englishName = stock.getEnglishName();
 
         Long quantity = 0L;
         boolean isLikePresent = false;
@@ -100,6 +99,6 @@ public class StockInfoServiceImpl implements StockInfoService {
 
 
         // GetAmountResponseDto 객체 생성 후 반환
-        return new GetAmountResponseDto(symbol, name, quantity, curPrice, isLikePresent);
+        return new GetAmountResponseDto(symbol, koreaName, englishName, quantity, curPrice, isLikePresent);
     }
 }
