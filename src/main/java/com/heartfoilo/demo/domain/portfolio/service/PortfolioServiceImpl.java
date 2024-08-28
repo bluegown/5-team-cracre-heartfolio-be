@@ -8,6 +8,7 @@ import com.heartfoilo.demo.domain.portfolio.repository.TotalAssetsRepository;
 import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
+import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
 import com.heartfoilo.demo.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Autowired
     private InvestRepository investRepository;
 
+    @Autowired
+    private RedisUtil redisUtil;
     public Map<String, Object> createStockMap(Long stockId, String stockName, Long totalQuantity,
                                               Long purchaseAvgPrice, Long totalPurchasePrice,
                                               Long evalValue, Long evalProfit, Double profitPercentage) {
@@ -45,12 +48,12 @@ public class PortfolioServiceImpl implements PortfolioService {
         stockMap.put("totalQuantity", totalQuantity);
         stockMap.put("purchaseAvgPrice", purchaseAvgPrice);
         stockMap.put("totalPurchasePrice", totalPurchasePrice);
-        stockMap.put("evalValue", evalValue);
-        stockMap.put("evalProfit", evalProfit);
-        stockMap.put("profitPercentage", profitPercentage);
-
+        stockMap.put("evalValue", evalValue); //
+        stockMap.put("evalProfit", evalProfit); //
+        stockMap.put("profitPercentage", profitPercentage); //
         return stockMap;
     }
+
     @Override
     public Map<String,Object> getAssets(long userId) { // 보유 자산 조회 API
 
@@ -63,16 +66,34 @@ public class PortfolioServiceImpl implements PortfolioService {
         long cash = account.getCash();
         long totalPurchase = account.getTotalPurchase();
 
-
         Map<String, Object> responseMap = new HashMap<>();
 
+        // 이미 리스트로 반환됨
+        List<TotalAssets> totalAssetsList = totalAssetsRepository.findByUserId(userId);
+        Long totalValue = 0L;
+        if (totalAssetsList == null){
+            totalValue = 0L;
+        }// 만약 유저가 주식을 하나도 구매하지 않은 경우
+        else {
+            for (TotalAssets asset : totalAssetsList) {
+                // 각 totalAsset에 대해 처리할 로직 작성
+
+                StockSocketInfoDto stockInfo = redisUtil.getStockInfoTemplate(asset.getStock().getSymbol()); // TODO: NULL값 에러 발생
+                if (stockInfo != null) {
+                    totalValue += (asset.getTotalQuantity() * stockInfo.getCurPrice());
+                } else {
+                    continue;
+                }
+                totalValue += (asset.getTotalQuantity() * stockInfo.getCurPrice());
+            }
+        }
         // 값들을 Map에 추가
-        responseMap.put("cash", cash);
-        responseMap.put("totalPurchase", totalPurchase);
-        responseMap.put("totalAmount", 10000000);
-        responseMap.put("totalValue", 10000000);
-        responseMap.put("profitRate", -10.4);
-// 요기 이제 소켓 데이터 들어가면 됨
+        responseMap.put("cash", cash); // 보유 캐시
+        responseMap.put("totalPurchase", totalPurchase); // 총매수금액
+        responseMap.put("totalAmount", totalValue + cash); // 총 자산
+        responseMap.put("totalValue", totalValue); // 총평가금액
+        responseMap.put("profitRate", totalPurchase > 0 ? (double)(totalValue - totalPurchase) / totalPurchase : 0); // 평가수익률
+
         return responseMap;
     }
 
