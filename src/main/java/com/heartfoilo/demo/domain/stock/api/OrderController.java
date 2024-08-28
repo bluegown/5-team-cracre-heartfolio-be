@@ -21,8 +21,8 @@ public class OrderController {
     private final OrderService orderService;
     private final StockInfoService stockInfoService;
 
-    @GetMapping("/order/history")
-    public ResponseEntity<List<OrderHistoryResponseDto>> getOrderHistory(HttpServletRequest request) {
+    @GetMapping("/order/{stock_id}/history")
+    public ResponseEntity<List<OrderHistoryResponseDto>> getOrderHistory(@PathVariable("stock_id") Long stockId, HttpServletRequest request) {
         String userStrId = (String) request.getAttribute("userId");
         if (userStrId == null) {
             // 비로그인 사용자 처리
@@ -30,7 +30,7 @@ public class OrderController {
         }
         Long userId = Long.parseLong(userStrId);
 
-        List<OrderHistoryResponseDto> history = orderService.getOrderHistory(userId);
+        List<OrderHistoryResponseDto> history = orderService.getOrderHistory(userId, stockId);
         return ResponseEntity.ok(history);
     }
 
@@ -40,15 +40,18 @@ public class OrderController {
         return ResponseEntity.ok(results);
     }
 
-    @GetMapping("/order/{stock_id}") // 보유 자산 조회 API
+    @GetMapping("/order/{stock_id}/details") // 주식 주문
     public ResponseEntity<GetAmountResponseDto> getStockInfo(@PathVariable("stock_id") long stockId, HttpServletRequest request){
         String userStrId = (String) request.getAttribute("userId");
+        GetAmountResponseDto getAmountResponseDto;
         if (userStrId == null) {
-            // 비로그인 사용자 처리
-            return ResponseEntity.status(401).build(); // 기본값 반환
+            getAmountResponseDto =  stockInfoService.getInfoNoUser(stockId);
+        } else {
+            Long userId = Long.parseLong(userStrId);
+
+            getAmountResponseDto =  stockInfoService.getInfo(userId, stockId);
         }
-        Long userId = Long.parseLong(userStrId);
-        GetAmountResponseDto getAmountResponseDto =  stockInfoService.getInfo(userId, stockId);
+
         return ResponseEntity.ok(getAmountResponseDto);
     }
 }
