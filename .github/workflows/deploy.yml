@@ -38,7 +38,7 @@ jobs:
 
       # docker image 빌드
       - name: Build docker image
-        run: docker build -t limzzum/heartfolio_b:0.0.1 .
+        run: docker build -t limzzum/heartfolio_b:0.0.1 . --no-cache
 
       # docker hub 로그인
       - name: Login docker hub
