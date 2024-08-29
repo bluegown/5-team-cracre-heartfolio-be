@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -26,11 +27,12 @@ public class OrderController {
         String userStrId = (String) request.getAttribute("userId");
         if (userStrId == null) {
             // 비로그인 사용자 처리
-            return ResponseEntity.status(401).build(); // 기본값 반환
+            return ResponseEntity.ok(Collections.emptyList()); // 기본값 반환
         }
         Long userId = Long.parseLong(userStrId);
 
         List<OrderHistoryResponseDto> history = orderService.getOrderHistory(userId, stockId);
+        Collections.reverse(history); // 역순으로 바꿔주면서 최신이 가장 위로 올라간다
         return ResponseEntity.ok(history);
     }
 

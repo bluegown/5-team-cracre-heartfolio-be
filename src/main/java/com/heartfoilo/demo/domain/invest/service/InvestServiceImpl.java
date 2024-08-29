@@ -49,14 +49,14 @@ public class InvestServiceImpl {
         return orders;
     } // order 객체 새로 만들어주는 기능
 
-    public ResponseEntity<?> order(InvestRequestDto getInfoRequestDto){
+    public ResponseEntity<?> order(InvestRequestDto getInfoRequestDto,long userId){
         Long stockId = getInfoRequestDto.getStockId();
         Long quantity = getInfoRequestDto.getQuantity();
         long price = getInfoRequestDto.getPrice();
 
-        Optional<Stock> optionalStock = stockRepository.findById(stockId);
+        Optional<Stock> optionalStock = stockRepository.findById(stockId); // 이건 없으면 사실 문제있는거라 예외처리 x
         Stock stock = optionalStock.get();
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
 
         TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
@@ -79,13 +79,13 @@ public class InvestServiceImpl {
 
 
         // orders 엔티티에 있는 내역 업데이트.
-        Order orders = createOrder(1L, "buy", quantity, (int) price,1L); // TODO : userId JWT로 대체, stockId 조치 필요
+        Order orders = createOrder(userId, "buy", quantity, (int) price,stockId); // 조치완료
 
         investRepository.save(orders);
 
         // Account 엔티티 업데이트
-        Optional<Account> accountOptional = portfolioRepository.findById(1L); // TODO : userId JWT로 대체
-        Account account = accountOptional.orElseThrow(() -> new RuntimeException("Account not found with id: 1"));
+        Optional<Account> accountOptional = portfolioRepository.findById(userId); // TODO : userId JWT로 대체
+        Account account = accountOptional.orElseThrow(() -> new RuntimeException("Account not found with id"));
 
         Long cash = account.getCash();
         Long totalPurchase = account.getTotalPurchase();
@@ -103,7 +103,7 @@ public class InvestServiceImpl {
         return ResponseEntity.ok("buy order successfully processed and total assets updated.");
     }
 
-    public ResponseEntity<?> sell(InvestRequestDto getInfoRequestDto){
+    public ResponseEntity<?> sell(InvestRequestDto getInfoRequestDto,long userId){
         Long stockId = getInfoRequestDto.getStockId();
         Long quantity = getInfoRequestDto.getQuantity(); // 요청한 수량
         long price = getInfoRequestDto.getPrice();
@@ -115,13 +115,13 @@ public class InvestServiceImpl {
         Long nowQuantity = totalAssets.getTotalQuantity();
         Long nowAvgPrice = totalAssets.getPurchaseAvgPrice(); // 현재 평단가
         nowQuantity = nowQuantity - quantity ; // 판만큼 빼주고 , 판매시 평단가는 그대로임
-        Order orders = createOrder( 1L, "sell", quantity, (int)price,1L);
+        Order orders = createOrder( userId, "sell", quantity, (int)price,stockId);
         if (nowQuantity < 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("판매할 수량이 보유 수량보다 많습니다.");
         }
         investRepository.save(orders);
 
-        Optional<Account> accountOptional = portfolioRepository.findById(1L); // 임시 코드
+        Optional<Account> accountOptional = portfolioRepository.findById(userId); // 임시 코드
         Account account = accountOptional.orElseThrow(() -> new RuntimeException("Account not found with id: 1"));
         Long cash = account.getCash(); // 현재 잔액 조회
         Long totalPurchase = account.getTotalPurchase();
