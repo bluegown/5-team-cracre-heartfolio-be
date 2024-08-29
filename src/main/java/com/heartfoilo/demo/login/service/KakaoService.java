@@ -1,5 +1,7 @@
 package com.heartfoilo.demo.login.service;
 
+import com.heartfoilo.demo.domain.portfolio.entity.Account;
+import com.heartfoilo.demo.domain.portfolio.repository.PortfolioRepository;
 import com.heartfoilo.demo.domain.user.entity.User;
 import com.heartfoilo.demo.domain.user.repository.UserRepository;
 import com.heartfoilo.demo.login.Generator.AuthTokensGenerator;
@@ -36,6 +38,8 @@ public class KakaoService{
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PortfolioRepository portfolioRepository;
     @Autowired
     public KakaoService(@Value("${kakao.client_id}") String clientId){
         this.clientId = clientId;
@@ -116,7 +120,9 @@ public class KakaoService{
         String nickname = "사용자" + random.nextInt(99999) + 1;
         if (!kakaoUser.isPresent()) {
             User newUser = new User(id,name, nickname);
+            Account account = new Account(newUser,1000000L,0L);
             userRepository.save(newUser); // email, name, nickname 세 개로 가입 진행
+            portfolioRepository.save(account);
         }
         else{
             nickname = kakaoUser.get().getNickname();
