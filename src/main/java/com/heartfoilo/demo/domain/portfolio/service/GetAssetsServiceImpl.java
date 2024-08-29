@@ -18,23 +18,22 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GetAssetsServiceImpl implements GetAssetsService{
     private final UserRepository userRepository;
-    private PortfolioRepository portfolioRepository;
-    private TotalAssetsRepository totalAssetsRepository;
-    private RedisUtil redisUtil;
+    private final PortfolioRepository portfolioRepository;
+    private final TotalAssetsRepository totalAssetsRepository;
+    private final RedisUtil redisUtil;
     @Override
     public ResponseEntity<Map<String,Object>> getAssets(long userId) { // 보유 자산 조회 API
         Map<String, Object> responseMap = new HashMap<>();
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
-        Optional<Account> accountOpt = portfolioRepository.findByUserId(userId);
+        Account account = portfolioRepository.findByUserId(userId);
 
-
-        if (!accountOpt.isPresent()) {
+        if (account == null) {
             return ResponseEntity.ok(Collections.emptyMap());
             // FIX :존재하지 않는다면 ,,, 근데 사실 존재하지 않으면 그건 데이터 설계가 잘못된거임
             // TODO : 회원가입시 account DB에 정보 주고 , 캐시 백만원과 정보 save
         }
-        Account account = accountOpt.get(); // 꺼내오고
+
 
         long cash = account.getCash();
         long totalPurchase = account.getTotalPurchase();
