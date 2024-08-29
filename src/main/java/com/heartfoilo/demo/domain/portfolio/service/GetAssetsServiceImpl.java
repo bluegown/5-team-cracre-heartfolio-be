@@ -42,13 +42,13 @@ public class GetAssetsServiceImpl implements GetAssetsService{
 
 
         // 이미 리스트로 반환됨
-        List<TotalAssets> totalAssetsList = totalAssetsRepository.findByUserId(userId);
+        Optional<List<TotalAssets>> totalAssetsList = totalAssetsRepository.findByUserId(userId);
         Long totalValue = 0L;
         if (totalAssetsList == null){
             totalValue = 0L;
         }// 만약 유저가 주식을 하나도 구매하지 않은 경우
         else {
-            for (TotalAssets asset : totalAssetsList) {
+            for (TotalAssets asset : totalAssetsList.get()) {
                 // 각 totalAsset에 대해 처리할 로직 작성
 
                 StockSocketInfoDto stockInfo = redisUtil.getStockInfoTemplate(asset.getStock().getSymbol()); // TODO: NULL값 에러 발생

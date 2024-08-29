@@ -10,7 +10,7 @@ import java.util.Optional;
 
 
 public interface TotalAssetsRepository extends JpaRepository<TotalAssets, Long> {
-    List<TotalAssets> findByUserId(long userId);
+    Optional<List<TotalAssets>> findByUserId(long userId);
     TotalAssets findByStockId(long stockId);
 
     Optional<TotalAssets> findByUserIdAndStockId(long userId, long stockId);

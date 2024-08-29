@@ -6,28 +6,36 @@ import com.heartfoilo.demo.domain.stock.entity.Stock;
 import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
 import com.heartfoilo.demo.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 public class GetStocksServiceImpl implements GetStocksService{
+
+    @Autowired
     private RedisUtil redisUtil;
-    private TotalAssetsRepository totalAssetsRepository;
+
+    private final TotalAssetsRepository totalAssetsRepository;
+    @Autowired
+    public GetStocksServiceImpl(TotalAssetsRepository totalAssetsRepository) {
+        this.totalAssetsRepository = totalAssetsRepository;
+    }
 
     @Override
     public ResponseEntity<Map<String, Object>> getStocks(long userId) {
-        List<TotalAssets> allAssets = totalAssetsRepository.findByUserId(userId);
-        if(allAssets == null){
+        Optional<List<TotalAssets>> allAssets = totalAssetsRepository.findByUserId(userId);
+        // TODO : 오류 수정
+        if(allAssets.isPresent() && !allAssets.get().isEmpty()){
             return ResponseEntity.ok(Collections.emptyMap()); // emptyMap 반환
         }
 
 
 
         List<Map<String, Object>> stockList = new ArrayList<>();
-        for (TotalAssets asset : allAssets) {
+        for (TotalAssets asset : allAssets.get()) {
 
             Stock findStock = asset.getStock();
             String stockName = findStock.getName();

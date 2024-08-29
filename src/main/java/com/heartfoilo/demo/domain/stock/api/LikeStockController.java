@@ -59,7 +59,7 @@ public class LikeStockController {
         if (userId == null) {
             return ResponseEntity.status(401).build(); // Unauthorized 처리
         }
-        likeService.removeFavorite(Long.valueOf(userId), stockId);
+        likeService.removeFavorite(userId, stockId);
         return ResponseEntity.ok().build();
     }
 }

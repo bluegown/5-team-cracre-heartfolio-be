@@ -33,14 +33,14 @@ public class GetTotalStocksServiceImpl implements GetTotalStocksService{
     private RedisUtil redisUtil;
     @Override
     public ResponseEntity<Map<String,Object>> getTotalStocks(long userId){
-        List<TotalAssets> totalAssets = totalAssetsRepository.findByUserId(userId);
+        Optional<List<TotalAssets>> totalAssets = totalAssetsRepository.findByUserId(userId);
 
         if(totalAssets == null){
             return ResponseEntity.ok(Collections.emptyMap());
         } // 주식 보유 존재x시 예외처리
         List<Map<String, Object>> totalAssetsList = new ArrayList<>();
 
-        TotalAssets[] assetsArray = totalAssets.toArray(new TotalAssets[0]);
+        TotalAssets[] assetsArray = totalAssets.get().toArray(new TotalAssets[0]);
         for (TotalAssets asset : assetsArray) {
 
             Stock findStock = asset.getStock();
