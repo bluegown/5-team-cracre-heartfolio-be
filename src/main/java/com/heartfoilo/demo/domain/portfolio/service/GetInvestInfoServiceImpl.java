@@ -14,13 +14,9 @@ import com.heartfoilo.demo.domain.invest.repository.InvestRepository;
 @Service
 public class GetInvestInfoServiceImpl implements GetInvestInfoService {
 
-    private InvestRepository investRepository;
+    private final InvestRepository investRepository;
     @Override
     public ResponseEntity<?> getInvestInfo(long userId) {
-
-
-
-
 
         List<GetInfoResponseDto> order = investRepository.findByUserId(userId); // order 테이블 기반
         if (order == null) {

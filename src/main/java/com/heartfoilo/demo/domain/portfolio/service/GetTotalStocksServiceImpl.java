@@ -29,8 +29,8 @@ public class GetTotalStocksServiceImpl implements GetTotalStocksService{
         stockMap.put("profitPercentage", profitPercentage); //
         return stockMap;
     }
-    private TotalAssetsRepository totalAssetsRepository;
-    private RedisUtil redisUtil;
+    private final TotalAssetsRepository totalAssetsRepository;
+    private final RedisUtil redisUtil;
     @Override
     public ResponseEntity<Map<String,Object>> getTotalStocks(long userId){
         Optional<List<TotalAssets>> totalAssets = totalAssetsRepository.findByUserId(userId);
