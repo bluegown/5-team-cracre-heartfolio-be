@@ -29,7 +29,7 @@ public class LikeStockController {
         Long userId = Long.parseLong(userStrId);
 
 
-        likeService.addFavorite(Long.valueOf(userId), stockId);
+        likeService.addFavorite(userId, stockId);
         return ResponseEntity.ok().build();
     }
 
