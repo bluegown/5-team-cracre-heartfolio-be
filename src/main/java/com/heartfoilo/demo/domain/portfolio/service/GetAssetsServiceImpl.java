@@ -46,6 +46,7 @@ public class GetAssetsServiceImpl implements GetAssetsService{
         if (totalAssetsList == null){
             totalValue = 0L;
         }// 만약 유저가 주식을 하나도 구매하지 않은 경우
+
         else {
             for (TotalAssets asset : totalAssetsList.get()) {
                 // 각 totalAsset에 대해 처리할 로직 작성
