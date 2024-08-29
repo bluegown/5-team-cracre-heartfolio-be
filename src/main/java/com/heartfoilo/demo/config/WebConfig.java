@@ -29,6 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(heartfolioInterceptor)
-                .addPathPatterns("/api/stock/favorites/**", "/api/stock/order/**"); // Interceptor가 적용될 경로를 지정
+                .addPathPatterns("/api/stock/favorites/**", "/api/stock/order/**","/api/portfolio/**"); // Interceptor가 적용될 경로를 지정
     }
 }
