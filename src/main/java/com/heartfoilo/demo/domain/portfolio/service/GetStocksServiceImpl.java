@@ -13,22 +13,19 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class GetStocksServiceImpl implements GetStocksService{
 
-    @Autowired
-    private RedisUtil redisUtil;
+
+    private final RedisUtil redisUtil;
 
     private final TotalAssetsRepository totalAssetsRepository;
-    @Autowired
-    public GetStocksServiceImpl(TotalAssetsRepository totalAssetsRepository) {
-        this.totalAssetsRepository = totalAssetsRepository;
-    }
 
     @Override
     public ResponseEntity<Map<String, Object>> getStocks(long userId) {
         Optional<List<TotalAssets>> allAssets = totalAssetsRepository.findByUserId(userId);
         // TODO : 오류 수정
-        if(allAssets.isPresent() && !allAssets.get().isEmpty()){
+        if(allAssets.get().isEmpty()){
             return ResponseEntity.ok(Collections.emptyMap()); // emptyMap 반환
         }
 
