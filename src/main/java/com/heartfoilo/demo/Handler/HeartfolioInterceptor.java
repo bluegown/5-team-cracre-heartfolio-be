@@ -44,8 +44,8 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
                 String userId = claims.getSubject(); // 이렇게 해야 id값이 불러져온다
                 request.setAttribute("userId", userId);
             } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
-                return false;
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+                return true;
             }
 
             return true;
