@@ -120,7 +120,7 @@ public class KakaoService{
         String nickname = "사용자" + random.nextInt(99999) + 1;
         if (!kakaoUser.isPresent()) {
             User newUser = new User(id,name, nickname);
-            Account account = new Account(newUser,1000000L,0L);
+            Account account = new Account(newUser,10000000L,0L);
             userRepository.save(newUser); // email, name, nickname 세 개로 가입 진행
             portfolioRepository.save(account);
         }
