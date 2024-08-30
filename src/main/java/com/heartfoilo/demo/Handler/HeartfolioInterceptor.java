@@ -29,27 +29,30 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
             //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+            request.setAttribute("userId", null);
+            return true;
+        } else {
+            token = token.substring(7);
+
+            try {
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(token)
+                        .getBody();
+
+                String userId = claims.getSubject(); // 이렇게 해야 id값이 불러져온다
+                request.setAttribute("userId", userId);
+            } catch (Exception e) {
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+                return true;
+            }
+
             return true;
         }
-        token = token.substring(7);
 
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
 
-            String userId = claims.getSubject(); // 이렇게 해야 id값이 불러져온다
-            request.setAttribute("userId", userId);
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
-            return false;
-        }
+        // other methods...
 
-        return true;
     }
-
-
-    // other methods...
 }

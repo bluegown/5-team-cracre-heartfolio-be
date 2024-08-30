@@ -27,4 +27,10 @@ public class Account {
 
     @Column(name = "total_purchase", nullable = false)
     private Long totalPurchase;
+
+    public Account(User newUser, long cash, long totalPurchase) {
+        this.user = newUser;
+        this.cash = cash;
+        this.totalPurchase = totalPurchase;
+    }
 }
