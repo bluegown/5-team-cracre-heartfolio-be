@@ -16,7 +16,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @RequiredArgsConstructor
 public class WebSocketClientConfig implements WebSocketConfigurer {
 
-    private static final String URL = "ws://ops.koreainvestment.com:31000";
+    private static final String URL = "ws://ops.koreainvestment.com:21000";
     private final WebSocketClientHandler webSocketClientHandler;
 
 

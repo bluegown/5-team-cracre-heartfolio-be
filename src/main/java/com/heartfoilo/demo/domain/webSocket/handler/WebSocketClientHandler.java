@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
 import com.heartfoilo.demo.util.RedisUtil;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 
     private final RedisUtil redisUtil;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    static private final int EXCHANGE_RATE = 1300;
     Map<String, String> header = new HashMap<>();
     Map<String, String> input = new HashMap<>();
     Map<String, Map<String, String>> body = new HashMap<>();
@@ -38,6 +40,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     static final ObjectMapper objectMapper = new ObjectMapper();
     static String value_iv;
     static String value_key;
+    static List<Map<String, Object>> requests = new ArrayList<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -51,18 +54,26 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         body.put("input", input);
         request.put("header", header);
         request.put("body", body);
+        List<String> types = List.of(
+            "NAS", "NAS", "NAS", "NAS", "NAS", "NYS", "NAS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NAS", "NYS", "NYS", "NAS", "NAS", "NAS", "NYS", "NYS", "NAS", "NYS", "NAS", "NYS", "NYS", "NYS", "NYS", "NAS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NYS", "NAS"
+        );
+
         List<String> stocks = List.of(
             "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "BRK.B", "NVDA", "JPM", "JNJ", "V",
             "WMT", "PG", "UNH", "DIS", "MA", "HD", "PYPL", "BAC", "VZ", "ADBE",
             "CMCSA", "NFLX", "PFE", "KO", "PEP", "MRK", "INTC", "T", "ABBV", "XOM",
-            "CVX", "CSCO", "MCD", "NKE", "ABT", "WFC", "LLY", "DHR", "CRM", "ORCL",
-            "ACN", "MDT", "LIN"
+            "CVX", "CSCO", "MCD", "NKE", "ABT", "WFC",
+            "LLY", "DHR", "CRM", "ORCL", "ACN", "MDT", "LIN"
+//            "UPS", "NEE", "PM", "QCOM", "COST", "TXN", "AVGO"
         );
-        for (String stock : stocks) {
+        for (int i=0; i<stocks.size(); i++) {
             input.put("tr_id", "HDFSCNT0");
-            input.put("tr_key", "DNAS"+stock);
+            input.put("tr_key", "D"+types.get(i)+stocks.get(i));
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
+            requests.add(request);
+
         }
+//        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(requests)));
     }
 
 
@@ -109,10 +120,10 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
         // 추출된 데이터를 DTO에 매핑
         return StockSocketInfoDto.builder()
             .symbol(details[1]) // 종목 코드
-            .curPrice(Integer.parseInt(details[11].replace(".","")))
-            .openPrice(Integer.parseInt(details[8].replace(".","")))
-            .highPrice(Integer.parseInt(details[9].replace(".","")))
-            .lowPrice(Integer.parseInt(details[10].replace(".","")))
+            .curPrice((int) (Float.parseFloat(details[11])* EXCHANGE_RATE))
+            .openPrice((int) (Float.parseFloat(details[8]) * EXCHANGE_RATE))
+            .highPrice((int) (Float.parseFloat(details[9]) * EXCHANGE_RATE))
+            .lowPrice((int) (Float.parseFloat(details[10]) * EXCHANGE_RATE))
             .earningValue(Math.round(Float.parseFloat(details[12])))
             .earningRate(Float.parseFloat(details[13]))
             .build();
