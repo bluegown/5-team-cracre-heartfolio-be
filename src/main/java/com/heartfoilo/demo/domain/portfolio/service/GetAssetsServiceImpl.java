@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -61,7 +62,10 @@ public class GetAssetsServiceImpl implements GetAssetsService{
         responseMap.put("totalPurchase", totalPurchase); // 총매수금액
         responseMap.put("totalAmount", totalValue + cash); // 총 자산
         responseMap.put("totalValue", totalValue); // 총평가금액
-        responseMap.put("profitRate", totalPurchase > 0 ? (double)(totalValue - totalPurchase) / totalPurchase : 0); // 평가수익률
+        double profitRate = totalPurchase > 0 ? (double)(totalValue - totalPurchase) / totalPurchase : 0;
+        DecimalFormat df = new DecimalFormat("#.##");
+        profitRate = Double.parseDouble(df.format(profitRate));
+        responseMap.put("profitRate", profitRate);
 
         return ResponseEntity.ok(responseMap);
     }
