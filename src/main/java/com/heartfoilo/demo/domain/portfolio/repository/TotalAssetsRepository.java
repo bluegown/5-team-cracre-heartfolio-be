@@ -20,4 +20,5 @@ public interface TotalAssetsRepository extends JpaRepository<TotalAssets, Long> 
 
     Optional<TotalAssets> findByUserIdAndStockId(long userId, long stockId);
 
+
 }

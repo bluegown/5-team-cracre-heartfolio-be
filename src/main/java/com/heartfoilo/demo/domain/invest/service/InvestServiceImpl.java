@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class InvestServiceImpl {
+public class InvestServiceImpl implements InvestService{
 
     @Autowired
     private TotalAssetsRepository totalAssetsRepository;
@@ -32,6 +32,7 @@ public class InvestServiceImpl {
     private StockRepository stockRepository;
     @Autowired
     private UserRepository userRepository;
+
     public Order createOrder(Long userId, String orderCategory, Long nowQuantity, int nowAvgPrice, Long stockId) {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new RuntimeException("Stock not found with id: " + stockId));
@@ -101,6 +102,7 @@ public class InvestServiceImpl {
         totalAssetsRepository.save(totalAssets);
         return ResponseEntity.ok("buy order successfully processed and total assets updated.");
     }
+
 
     public ResponseEntity<?> sell(InvestRequestDto getInfoRequestDto,long userId){
         Long stockId = getInfoRequestDto.getStockId();
