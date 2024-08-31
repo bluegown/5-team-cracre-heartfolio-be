@@ -24,7 +24,8 @@ public class StockInfoPollingScheduler {
     private final StockRepository stockRepository;
     private final RedisUtil redisUtil;
     private List<Stock> stocks;
-    private WebClient webClient = WebClient.builder().build();;
+    static private WebClient webClient = WebClient.builder().build();
+    static int idx;
 
     @Value("${korea-invest.host}")
     private String host;
@@ -50,29 +51,27 @@ public class StockInfoPollingScheduler {
     private String token;
 
     @PostConstruct
-    public void getStocks(){
+    public void getStocks() {
         stocks = stockRepository.findAll();
         token = getOauthToken();
     }
 
-    @Scheduled(fixedRate = 5000)
-    public void pollingStockInfo(){
+    @Scheduled(initialDelayString = "5000", fixedRate = 500)
+    public void pollingStockInfo() {
         String type = "NYS";
-        for (Stock stock : stocks) {
-            if(stock.getType().equals("NASDAQ")){
-                type = "NAS";
-            }
-            updateStockInfo(type, stock.getSymbol());
+        idx = (idx + 1) % stocks.size();
+        if (stocks.get(idx).getType().equals("NASDAQ")) {
+            type = "NAS";
         }
-
+        updateStockInfo(type, stocks.get(idx).getSymbol());
     }
 
     @Scheduled(cron = "0 0 23 * * ?")
-    public void updateToken(){
+    public void updateToken() {
         token = getOauthToken();
     }
 
-    private void updateStockInfo(String type, String symbol){
+    private void updateStockInfo(String type, String symbol) {
         try {
             Map result = webClient
                 .get()
@@ -87,7 +86,7 @@ public class StockInfoPollingScheduler {
                         .queryParam("SYMB", symbol)
                         .build())
                 .header(HttpHeaders.AUTHORIZATION,
-                    "Bearer "+token)
+                    "Bearer " + token)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header("appkey", appKey)
                 .header("appsecret", appSecret)
@@ -97,14 +96,13 @@ public class StockInfoPollingScheduler {
                 .block();
             redisUtil.setStockInfoTemplate(symbol, new StockSocketInfoDto(
                 (Map<String, String>) result.get("output")));
-
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 
     }
 
-    private String getOauthToken(){
+    private String getOauthToken() {
         Map result = webClient
             .post()
             .uri(uriBuilder ->
@@ -114,7 +112,8 @@ public class StockInfoPollingScheduler {
                     .port(port)
                     .path(oauthUrl)
                     .build())
-            .bodyValue(RequestOauthDto.builder().grant_type("client_credentials").appkey(appKey).appsecret(appSecret).build())
+            .bodyValue(RequestOauthDto.builder().grant_type("client_credentials").appkey(appKey)
+                .appsecret(appSecret).build())
             .retrieve()
             .bodyToMono(Map.class)
             .block();
