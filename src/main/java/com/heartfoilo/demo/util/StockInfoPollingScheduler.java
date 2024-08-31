@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,6 +24,7 @@ public class StockInfoPollingScheduler {
 
     private final StockRepository stockRepository;
     private final RedisUtil redisUtil;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     private List<Stock> stocks;
     static private WebClient webClient = WebClient.builder().build();
     static int idx;
@@ -96,6 +98,8 @@ public class StockInfoPollingScheduler {
                 .block();
             redisUtil.setStockInfoTemplate(symbol, new StockSocketInfoDto(
                 (Map<String, String>) result.get("output")));
+            StockSocketInfoDto stockSocketInfoDto = redisUtil.getStockInfoTemplate(symbol);
+            simpMessagingTemplate.convertAndSend("/from/stock/"+stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
