@@ -66,13 +66,13 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             "LLY", "DHR", "CRM", "ORCL", "ACN", "MDT", "LIN"
 //            "UPS", "NEE", "PM", "QCOM", "COST", "TXN", "AVGO"
         );
-        for (int i=0; i<stocks.size(); i++) {
-            input.put("tr_id", "HDFSCNT0");
-            input.put("tr_key", "D"+types.get(i)+stocks.get(i));
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
-            requests.add(request);
-
-        }
+//        for (int i=0; i<stocks.size(); i++) {
+//            input.put("tr_id", "HDFSCNT0");
+//            input.put("tr_key", "D"+types.get(i)+stocks.get(i));
+//            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
+//            requests.add(request);
+//
+//        }
 //        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(requests)));
     }
 
@@ -82,6 +82,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
         throws Exception {
         String s = message.getPayload().toString();
+        System.out.println("s :"+s);
         handleData(s);
 
     }

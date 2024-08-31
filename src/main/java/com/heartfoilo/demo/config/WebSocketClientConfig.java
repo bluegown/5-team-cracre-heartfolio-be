@@ -19,16 +19,12 @@ public class WebSocketClientConfig implements WebSocketConfigurer {
     private static final String URL = "ws://ops.koreainvestment.com:21000";
     private final WebSocketClientHandler webSocketClientHandler;
 
-
-
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
-
-        WebSocketConnectionManager connectionManager = new WebSocketConnectionManager(webSocketClient,
-            webSocketClientHandler, URL);
-
-        connectionManager.setAutoStartup(true);
-        connectionManager.start();
+//        WebSocketConnectionManager connectionManager = new WebSocketConnectionManager(webSocketClient,
+//            webSocketClientHandler, URL);
+//        connectionManager.setAutoStartup(true);
+//        connectionManager.start();
     }
 }
