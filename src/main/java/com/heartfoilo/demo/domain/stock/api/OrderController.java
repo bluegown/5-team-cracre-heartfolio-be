@@ -42,7 +42,7 @@ public class OrderController {
         return ResponseEntity.ok(results);
     }
 
-    @GetMapping("/order/{stock_id}/details") // 주식 주문
+    @GetMapping("/order/{stock_id}/details")
     public ResponseEntity<GetAmountResponseDto> getStockInfo(@PathVariable("stock_id") long stockId, HttpServletRequest request){
         String userStrId = (String) request.getAttribute("userId");
         GetAmountResponseDto getAmountResponseDto;

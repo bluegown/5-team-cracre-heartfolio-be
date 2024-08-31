@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class InvestServiceImpl {
+public class InvestServiceImpl implements InvestService{
 
     @Autowired
     private TotalAssetsRepository totalAssetsRepository;
@@ -32,6 +32,7 @@ public class InvestServiceImpl {
     private StockRepository stockRepository;
     @Autowired
     private UserRepository userRepository;
+
     public Order createOrder(Long userId, String orderCategory, Long nowQuantity, int nowAvgPrice, Long stockId) {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new RuntimeException("Stock not found with id: " + stockId));
@@ -59,7 +60,7 @@ public class InvestServiceImpl {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
 
-        TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
+        TotalAssets totalAssets = totalAssetsRepository.findByStockIdAndUserId(stockId,userId);
         if (totalAssets == null) {
             totalAssets = new TotalAssets();
             totalAssets.setStock(stock);
@@ -84,8 +85,7 @@ public class InvestServiceImpl {
         investRepository.save(orders);
 
         // Account 엔티티 업데이트
-        Optional<Account> accountOptional = portfolioRepository.findById(userId); // TODO : userId JWT로 대체
-        Account account = accountOptional.orElseThrow(() -> new RuntimeException("Account not found with id"));
+        Account account =  portfolioRepository.findByUserId(userId); // TODO : userId JWT로 대체
 
         Long cash = account.getCash();
         Long totalPurchase = account.getTotalPurchase();
@@ -103,12 +103,13 @@ public class InvestServiceImpl {
         return ResponseEntity.ok("buy order successfully processed and total assets updated.");
     }
 
+
     public ResponseEntity<?> sell(InvestRequestDto getInfoRequestDto,long userId){
         Long stockId = getInfoRequestDto.getStockId();
         Long quantity = getInfoRequestDto.getQuantity(); // 요청한 수량
         long price = getInfoRequestDto.getPrice();
 
-        TotalAssets totalAssets = totalAssetsRepository.findByStockId(stockId);
+        TotalAssets totalAssets = totalAssetsRepository.findByStockIdAndUserId(stockId,userId);
         if (totalAssets == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 자산을 찾을 수 없습니다.");
         } // 팔려는데 Null이면 그건 문제가 있는거임
@@ -121,8 +122,7 @@ public class InvestServiceImpl {
         }
         investRepository.save(orders);
 
-        Optional<Account> accountOptional = portfolioRepository.findById(userId); // 임시 코드
-        Account account = accountOptional.orElseThrow(() -> new RuntimeException("Account not found with id: 1"));
+        Account account = portfolioRepository.findByUserId(userId); // 임시 코드
         Long cash = account.getCash(); // 현재 잔액 조회
         Long totalPurchase = account.getTotalPurchase();
 
