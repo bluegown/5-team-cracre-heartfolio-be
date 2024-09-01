@@ -1,13 +1,10 @@
 package com.heartfoilo.demo.util;
 
 import com.heartfoilo.demo.domain.webSocket.dto.StockSocketInfoDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class RedisUtil {
@@ -61,7 +58,7 @@ public class RedisUtil {
 
     public void setStockInfoTemplate(String key, Object o) {
         stockInfoTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(o.getClass()));
-        stockInfoTemplate.opsForValue().set(key, o, 4320, TimeUnit.MINUTES);
+        stockInfoTemplate.opsForValue().set(key, o, 100, TimeUnit.MINUTES);
     }
 
     public StockSocketInfoDto getStockInfoTemplate(String key) {

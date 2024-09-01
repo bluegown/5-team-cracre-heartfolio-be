@@ -1,5 +1,6 @@
 package com.heartfoilo.demo.domain.webSocket.dto;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,25 +12,32 @@ import lombok.NoArgsConstructor;
 @Builder
 public class StockSocketInfoDto {
 
-    //종목 코드
     private String symbol;
 
-    //cur_cost 현재가
     private int curPrice;
-    //시가
+
     private int openPrice;
 
-    //high_cost 최고가
     private int highPrice;
 
-    //low_cost 최저가
     private int lowPrice;
 
-    //earningValue 전일대비 수익
     private int earningValue;
 
-    //earningRate 전일대비 수익률
     private float earningRate;
+
+    private float changeRate;
+
+    public StockSocketInfoDto(Map<String, String> input){
+        this.symbol = input.get("rsym").substring(4);
+        this.changeRate = Float.parseFloat(input.get("t_rate"));
+        this.curPrice = Integer.parseInt(input.get("t_xprc"));
+        this.openPrice = Math.round(Float.parseFloat(input.get("open")) * changeRate);
+        this.highPrice = Math.round(Float.parseFloat(input.get("high")) * changeRate);
+        this.lowPrice = Math.round(Float.parseFloat(input.get("low")) * changeRate);
+        this.earningValue = Integer.parseInt(input.get("p_xdif"));
+        this.earningRate = earningValue * 100.0f / (Float.parseFloat(input.get("base"))*changeRate);
+    }
 
 }
 
