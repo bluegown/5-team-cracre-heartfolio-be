@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 @Service
@@ -41,7 +42,7 @@ public class InvestServiceImpl implements InvestService{
         Order orders = new Order();
         orders.setUser(user);
         orders.setOrderCategory(orderCategory);
-        orders.setOrderDate(LocalDateTime.now());
+        orders.setOrderDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         orders.setOrderAmount(nowQuantity);
         orders.setOrderPrice(nowAvgPrice);
         orders.setTotalAmount(nowQuantity * nowAvgPrice);
