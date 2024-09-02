@@ -62,7 +62,7 @@ public class GetAssetsServiceImpl implements GetAssetsService{
         responseMap.put("totalPurchase", totalPurchase); // 총매수금액
         responseMap.put("totalAmount", totalValue + cash); // 총 자산
         responseMap.put("totalValue", totalValue); // 총평가금액
-        double profitRate = totalPurchase > 0 ? (double)(totalValue - totalPurchase) / totalPurchase : 0;
+        double profitRate = totalPurchase > 0 ? (double)(totalValue - totalPurchase) * 100 / totalPurchase : 0;
         DecimalFormat df = new DecimalFormat("#.##");
         profitRate = Double.parseDouble(df.format(profitRate));
         responseMap.put("profitRate", profitRate);
