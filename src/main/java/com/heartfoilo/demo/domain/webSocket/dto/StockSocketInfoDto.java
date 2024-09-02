@@ -1,5 +1,7 @@
 package com.heartfoilo.demo.domain.webSocket.dto;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StockSocketInfoDto {
 
     private String symbol;

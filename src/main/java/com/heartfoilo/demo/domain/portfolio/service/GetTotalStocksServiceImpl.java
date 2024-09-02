@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -59,8 +60,9 @@ public class GetTotalStocksServiceImpl implements GetTotalStocksService{
             // 여기서부터 3개는 소켓 변동값 ##
             Long evalValue = totalQuantity * nowPrice; // 현재 평가금액
             Long evalProfit = evalValue - totalPurchasePrice; // 평가금액에서 총매수금액을 뺀게 평가손익
-            double profitPercentage = evalProfit/(float)totalPurchasePrice; // 수익률
-
+            double profitPercentage = evalProfit * 100/(float)totalPurchasePrice; // 수익률
+            DecimalFormat df = new DecimalFormat("#.##");
+            profitPercentage = Double.parseDouble(df.format(profitPercentage));
 
             Map<String, Object> stockMap = createStockMap(findStock.getId(), stockName, totalQuantity, purchaseAvgPrice,
                     totalPurchasePrice, evalValue, evalProfit, profitPercentage);
