@@ -41,12 +41,12 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
                         .parseClaimsJws(token)
                         .getBody();
 
-                String userId = claims.getSubject(); // 이렇게 해야 id값이 불러져온다
+                String userId = claims.getSubject();
                 request.setAttribute("userId", userId);
-            } catch (Exception e) {
-                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
-                return true;
-            }
+            } catch (ExpiredJwtException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
+                return false; // 요청을 중단합니다.
+            } // 여기서 401 요청시 프론트엔드에서 RefreshToken 요청
 
             return true;
         }
