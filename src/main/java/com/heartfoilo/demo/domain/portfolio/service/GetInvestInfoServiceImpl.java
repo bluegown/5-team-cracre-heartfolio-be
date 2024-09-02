@@ -22,6 +22,7 @@ public class GetInvestInfoServiceImpl implements GetInvestInfoService {
         if (order == null) {
             return ResponseEntity.ok(Collections.emptyList());
         }
+        Collections.reverse(order); // 리스트를 역순으로 정렬
         return ResponseEntity.ok(order);
     }
 }
