@@ -66,13 +66,13 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
             "LLY", "DHR", "CRM", "ORCL", "ACN", "MDT", "LIN"
 //            "UPS", "NEE", "PM", "QCOM", "COST", "TXN", "AVGO"
         );
-        for (int i=0; i<stocks.size(); i++) {
-            input.put("tr_id", "HDFSCNT0");
-            input.put("tr_key", "D"+types.get(i)+stocks.get(i));
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
-            requests.add(request);
-
-        }
+//        for (int i=0; i<stocks.size(); i++) {
+//            input.put("tr_id", "HDFSCNT0");
+//            input.put("tr_key", "D"+types.get(i)+stocks.get(i));
+//            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
+//            requests.add(request);
+//
+//        }
 //        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(requests)));
     }
 
@@ -82,6 +82,7 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
         throws Exception {
         String s = message.getPayload().toString();
+        System.out.println("s :"+s);
         handleData(s);
 
     }
@@ -119,12 +120,12 @@ public class WebSocketClientHandler extends TextWebSocketHandler {
 
         // 추출된 데이터를 DTO에 매핑
         return StockSocketInfoDto.builder()
-            .symbol(details[1]) // 종목 코드
+            .symbol(details[1])
             .curPrice((int) (Float.parseFloat(details[11])* EXCHANGE_RATE))
             .openPrice((int) (Float.parseFloat(details[8]) * EXCHANGE_RATE))
             .highPrice((int) (Float.parseFloat(details[9]) * EXCHANGE_RATE))
             .lowPrice((int) (Float.parseFloat(details[10]) * EXCHANGE_RATE))
-            .earningValue(Math.round(Float.parseFloat(details[12])))
+            .earningValue(Math.round(Float.parseFloat(details[12])) * EXCHANGE_RATE)
             .earningRate(Float.parseFloat(details[13]))
             .build();
     }

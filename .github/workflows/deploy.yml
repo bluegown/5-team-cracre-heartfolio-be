@@ -64,3 +64,4 @@ jobs:
             docker rm backend
             docker pull limzzum/heartfolio_b:0.0.1
             docker run -d -p 8080:8080 --name backend limzzum/heartfolio_b:0.0.1
+            docker image prune -f
