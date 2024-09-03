@@ -56,8 +56,7 @@ public class InvestServiceImpl implements InvestService{
         Long quantity = getInfoRequestDto.getQuantity();
         long price = getInfoRequestDto.getPrice();
 
-        Optional<Stock> optionalStock = stockRepository.findById(stockId); // 이건 없으면 사실 문제있는거라 예외처리 x
-        Stock stock = optionalStock.get();
+        Stock stock = stockRepository.findById(stockId).orElseThrow(() -> new RuntimeException("Stock not found")); // 예외처리는 언제나!^_^
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
 
@@ -68,6 +67,23 @@ public class InvestServiceImpl implements InvestService{
             totalAssets.setUser(user);
             totalAssets.setTotalQuantity(quantity);
             totalAssets.setPurchaseAvgPrice(price);
+            totalAssetsRepository.save(totalAssets);
+            Order orders = createOrder(userId, "buy", quantity, (int) price,stockId); // 조치완료
+
+            investRepository.save(orders);
+
+            Account account =  portfolioRepository.findByUserId(userId); // TODO : userId JWT로 대체
+
+            Long cash = account.getCash();
+            Long totalPurchase = account.getTotalPurchase();
+            if (cash >= quantity * price) {
+                account.setCash(cash - (quantity * price));
+                account.setTotalPurchase(totalPurchase + (quantity * price));
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잔액이 부족합니다.");
+            }
+            portfolioRepository.save(account);
             totalAssetsRepository.save(totalAssets);
             return ResponseEntity.ok("자산이 성공적으로 업데이트되었습니다.");
         }
@@ -98,6 +114,7 @@ public class InvestServiceImpl implements InvestService{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잔액이 부족합니다.");
         }
         portfolioRepository.save(account);
+
 
 
         totalAssetsRepository.save(totalAssets);
