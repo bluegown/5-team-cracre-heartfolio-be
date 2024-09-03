@@ -116,6 +116,7 @@ public class InvestServiceImpl implements InvestService{
         portfolioRepository.save(account);
 
 
+
         totalAssetsRepository.save(totalAssets);
         return ResponseEntity.ok("buy order successfully processed and total assets updated.");
     }
