@@ -46,7 +46,10 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
             } catch (ExpiredJwtException e) {
                 // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
                 return true; // 요청을 중단합니다.
-            } // 여기서 401 요청시 프론트엔드에서 RefreshToken 요청
+            }  catch (JwtException e) {
+                request.setAttribute("userId", null);
+                return true; // 요청을 중단합니다.
+            }
 
             return true;
         }
