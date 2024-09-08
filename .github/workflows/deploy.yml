@@ -7,7 +7,7 @@ on:
 
 jobs:
   backend-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted`
     steps:
       # SOURCE 단계 - 저장소 Checkout 및 서브모듈 가져오기
       - name: Checkout-source code
@@ -51,15 +51,9 @@ jobs:
       - name: Publish to docker hub
         run: docker push limzzum/heartfolio_b:0.0.1
 
-      # WAS 인스턴스 접속 & 애플리케이션 실행
-      - name: Connect to WAS & Execute Application
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.WAS_HOST }}
-          username: ${{ secrets.WAS_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
+      # 애플리케이션 실행
+      - name: Execute Application
+        run: |
             docker stop backend
             docker rm backend
             docker pull limzzum/heartfolio_b:0.0.1
