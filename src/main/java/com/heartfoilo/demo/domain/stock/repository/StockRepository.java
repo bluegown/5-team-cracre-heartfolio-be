@@ -13,9 +13,8 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     List<Stock> findAllByOrderByEarningRateDesc(Pageable pageable);
 
-    Optional<Stock> findById(long stockId);
-
-    List<Stock> findByNameContainingOrSymbolContaining(String nameKeyword, String symbolKeyword);
+    @Query("SELECT s FROM Stock s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(s.symbol) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(s.englishName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Stock> searchStock(String keyword);
 
 }
 
