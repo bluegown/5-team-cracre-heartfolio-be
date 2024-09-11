@@ -45,7 +45,6 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
                 request.setAttribute("userId", userId);
             } catch (ExpiredJwtException e) {
                 // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
-
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 반환
                 response.getWriter().write("{\"message\": \"Access token has expired\", \"status\": 401}");
                 response.getWriter().flush();
