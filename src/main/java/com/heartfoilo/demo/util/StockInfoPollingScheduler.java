@@ -58,6 +58,8 @@ public class StockInfoPollingScheduler {
         token = getOauthToken();
     }
 
+
+
     @Scheduled(initialDelayString = "5000", fixedRate = 500)
     public void pollingStockInfo() {
         String type = "NYS";
