@@ -29,6 +29,8 @@ public class StockInfoPollingScheduler {
     static private WebClient webClient = WebClient.builder().build();
     static int idx;
 
+
+
     @Value("${korea-invest.host}")
     private String host;
 
