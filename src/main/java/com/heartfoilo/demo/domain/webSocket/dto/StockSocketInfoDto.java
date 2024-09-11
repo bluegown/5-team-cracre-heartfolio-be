@@ -38,9 +38,10 @@ public class StockSocketInfoDto {
         this.openPrice = Math.round(Float.parseFloat(input.get("open")) * changeRate);
         this.highPrice = Math.round(Float.parseFloat(input.get("high")) * changeRate);
         this.lowPrice = Math.round(Float.parseFloat(input.get("low")) * changeRate);
-        this.earningValue = Integer.parseInt(input.get("p_xdif"));
-        this.earningRate = earningValue * 100.0f / (Float.parseFloat(input.get("base"))*changeRate);
+        this.earningValue = curPrice - Math.round(Float.parseFloat(input.get("base")) * changeRate);
+        this.earningRate = earningValue * 100.0f / (Float.parseFloat(input.get("base")) * changeRate);
     }
+
 
 }
 

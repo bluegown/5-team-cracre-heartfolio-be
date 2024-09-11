@@ -25,15 +25,15 @@ public class StockInfoPollingScheduler {
     private final StockRepository stockRepository;
     private final RedisUtil redisUtil;
     private final SimpMessagingTemplate simpMessagingTemplate;
-//    private List<Stock> stocks;
-//    static private WebClient webClient = WebClient.builder().build();
-//    static int idx;
-//
-//    @Value("${korea-invest.host}")
-//    private String host;
-//
-//    @Value("${korea-invest.port}")
-//    private String port;
+    private List<Stock> stocks;
+    static private WebClient webClient = WebClient.builder().build();
+    static int idx;
+
+    @Value("${korea-invest.host}")
+    private String host;
+
+    @Value("${korea-invest.port}")
+    private String port;
 
     @Value("${korea-invest.url}")
     private String url;
@@ -76,28 +76,28 @@ public class StockInfoPollingScheduler {
     private void updateStockInfo(String type, String symbol) {
         try {
             Map result = webClient
-                .get()
-                .uri(uriBuilder ->
-                    uriBuilder
-                        .scheme("https")
-                        .host(host)
-                        .port(port)
-                        .path(url)
-                        .queryParam("AUTH", "")
-                        .queryParam("EXCD", type)
-                        .queryParam("SYMB", symbol)
-                        .build())
-                .header(HttpHeaders.AUTHORIZATION,
-                    "Bearer " + token)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .header("appkey", appKey)
-                .header("appsecret", appSecret)
-                .header("tr_id", trId)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
+                    .get()
+                    .uri(uriBuilder ->
+                            uriBuilder
+                                    .scheme("https")
+                                    .host(host)
+                                    .port(port)
+                                    .path(url)
+                                    .queryParam("AUTH", "")
+                                    .queryParam("EXCD", type)
+                                    .queryParam("SYMB", symbol)
+                                    .build())
+                    .header(HttpHeaders.AUTHORIZATION,
+                            "Bearer " + token)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .header("appkey", appKey)
+                    .header("appsecret", appSecret)
+                    .header("tr_id", trId)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
             redisUtil.setStockInfoTemplate(symbol, new StockSocketInfoDto(
-                (Map<String, String>) result.get("output")));
+                    (Map<String, String>) result.get("output")));
             StockSocketInfoDto stockSocketInfoDto = redisUtil.getStockInfoTemplate(symbol);
             simpMessagingTemplate.convertAndSend("/from/stock/"+stockSocketInfoDto.getSymbol(), stockSocketInfoDto);
         } catch (Exception e) {
@@ -108,19 +108,19 @@ public class StockInfoPollingScheduler {
 
     private String getOauthToken() {
         Map result = webClient
-            .post()
-            .uri(uriBuilder ->
-                uriBuilder
-                    .scheme("https")
-                    .host(host)
-                    .port(port)
-                    .path(oauthUrl)
-                    .build())
-            .bodyValue(RequestOauthDto.builder().grant_type("client_credentials").appkey(appKey)
-                .appsecret(appSecret).build())
-            .retrieve()
-            .bodyToMono(Map.class)
-            .block();
+                .post()
+                .uri(uriBuilder ->
+                        uriBuilder
+                                .scheme("https")
+                                .host(host)
+                                .port(port)
+                                .path(oauthUrl)
+                                .build())
+                .bodyValue(RequestOauthDto.builder().grant_type("client_credentials").appkey(appKey)
+                        .appsecret(appSecret).build())
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
         return String.valueOf(result.get("access_token"));
     }
 }
