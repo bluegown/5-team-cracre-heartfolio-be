@@ -27,12 +27,14 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Authorization");
-        if (token == null || !token.startsWith("Bearer ")) {
+        System.out.println("내가 first token" + token);
+        if (token == null || token.equals("Bearer null") || !token.startsWith("Bearer ")) {
             //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
             request.setAttribute("userId", null);
-            return true;
+            return false;
         } else {
             token = token.substring(7);
+
 
             try {
                 Claims claims = Jwts.parserBuilder()
@@ -48,16 +50,11 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 반환
                 response.getWriter().write("{\"message\": \"Access token has expired\", \"status\": 401}");
                 response.getWriter().flush();
-                return false;  // 요청 중단
-            } // 여기서 401 요청시 프론트엔드에서 RefreshToken 요청
-            catch (JwtException e) {
-                // 토큰이 잘못된 경우
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 반환
-                response.getWriter().write("{\"message\": \"Invalid token\", \"status\": 403}");
-                response.getWriter().flush();
+                request.setAttribute("token",null);
                 return false;
-            } // 403이면 여전히 로그인 유도
+            } // 여기서 401 요청시 프론트엔드에서 RefreshToken 요청
 
+            request.setAttribute("token",token);
 
             return true;
         }
