@@ -31,7 +31,7 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
         if (token == null || token.equals("Bearer null") || !token.startsWith("Bearer ")) {
             //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
             request.setAttribute("userId", null);
-            return false;
+            return true;
         } else {
             token = token.substring(7);
 
@@ -45,6 +45,7 @@ public class HeartfolioInterceptor implements HandlerInterceptor {
 
                 String userId = claims.getSubject();
                 request.setAttribute("userId", userId);
+
             } catch (ExpiredJwtException e) {
                 // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 반환
