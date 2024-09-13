@@ -46,7 +46,6 @@ public class OrderController {
     public ResponseEntity<GetAmountResponseDto> getStockInfo(@PathVariable("stock_id") long stockId, HttpServletRequest request){
         String userStrId = (String) request.getAttribute("userId");
         GetAmountResponseDto getAmountResponseDto;
-        System.out.println(userStrId);
         if (userStrId == null) {
             getAmountResponseDto =  stockInfoService.getInfoNoUser(stockId);
         } else {

@@ -20,16 +20,16 @@ import java.util.Map;
 public class RefreshTokenController {
     private final RefreshTokenService refreshTokenService;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final long accessTokenExpireTime = 1000 * 60;
+    private static final long accessTokenExpireTime = 1000 * 60 * 60;
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         String refreshTokenStr = request.get("refreshToken");
 
-        System.out.println(refreshTokenStr);
+
         RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenStr)
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
 
-        System.out.println("refreshToken : " + refreshToken);
+
         // 만료 여부 확인
         refreshTokenService.verifyExpiration(refreshToken);
 // 여기서 오류 -> localstorage delete 이후 Login 창으로 navigate
@@ -38,7 +38,6 @@ public class RefreshTokenController {
         Date accessTokenExpiredAt = new Date(now + accessTokenExpireTime);
         String newAccessToken = jwtTokenProvider.accessTokenGenerate(refreshToken.getUser().getId().toString(),accessTokenExpiredAt);
 
-        System.out.println(newAccessToken);
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
     } // TODO: 여기서부터 다시하기 !! 
 }
