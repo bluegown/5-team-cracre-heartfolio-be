@@ -30,13 +30,12 @@ public class ApiSearchNewsService {
         String encodedQuery;
         try {
             encodedQuery = URLEncoder.encode(query, "UTF-8");
-
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("검색어 인코딩 실패", e);
         }
 
         String apiURL = "https://openapi.naver.com/v1/search/news?query=" + encodedQuery
-                +"&display=20&sort=date";
+                +"&display=20&sort=sim";
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", CLIENT_ID);
@@ -50,6 +49,7 @@ public class ApiSearchNewsService {
 
             List<NewsItemDto> filteredItems = responseDto.getItems().stream()
                     .filter(item -> containsKorean(item.getTitle()))
+                    .peek(item -> item.setFormattedPubDate(item.getPubDate())) // 날짜 형식 변경
                     .collect(Collectors.toList());
 
             responseDto.setItems(filteredItems);
