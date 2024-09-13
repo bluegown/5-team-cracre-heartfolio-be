@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthTokensGenerator {
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60;	//TODO: 1분으로 임시 설정 -> 추후 수정필요
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;	//TODO: 일단 60분 설정해둠
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일로 설정
 
     private final JwtTokenProvider jwtTokenProvider;
