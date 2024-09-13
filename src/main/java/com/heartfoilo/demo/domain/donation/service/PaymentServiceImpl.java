@@ -52,9 +52,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         try {
             // 결제 단건 조회(아임포트)
+            System.out.println(request);
             IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.getPaymentUid());
             // 주문내역 조회
-            Donation donation = donationRepository.findOrderAndPayment(request.getDonationUid())
+            Donation donation = donationRepository.findOrderAndPayment(request.getOrderUid())
                     .orElseThrow(() -> new IllegalArgumentException("주문 내역이 없습니다."));
             if (!iamportResponse.getResponse().getStatus().equals("paid")) {
                 // 주문, 결제 삭제

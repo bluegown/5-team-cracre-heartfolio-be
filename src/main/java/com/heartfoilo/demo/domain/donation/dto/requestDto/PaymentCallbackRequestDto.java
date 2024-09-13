@@ -9,6 +9,6 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PaymentCallbackRequestDto {
     private String paymentUid;
-    private String DonationUid;
+    private String orderUid;
 }
 // 결제 이후 서버가 전달받는 데이터를 정의
