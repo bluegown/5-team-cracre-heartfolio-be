@@ -25,7 +25,7 @@ public class ApiSearchNewsService {
     @Value("${newsapi.client-secret}")
     private String CLIENT_SECRET; // 애플리케이션 클라이언트 시크릿
 
-    @Cacheable(value = "newsCache", key = "#query")
+
     public NewsResponseDto searchNews(String query) {
         String encodedQuery;
         try {
@@ -36,7 +36,7 @@ public class ApiSearchNewsService {
         }
 
         String apiURL = "https://openapi.naver.com/v1/search/news?query=" + encodedQuery
-                +"&display=20&sort=sim";
+                +"&display=20&sort=date";
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", CLIENT_ID);
