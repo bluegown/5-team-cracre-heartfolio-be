@@ -32,7 +32,8 @@ public class KakaoService{
     private String clientId;
     private final String KAUTH_TOKEN_URL_HOST;
     private final String KAUTH_USER_URL_HOST;
-
+    @Value("${kakao.redirect_uri}")
+    private String kakaoRedirectUri;
     @Autowired
     private AuthTokensGenerator authTokensGenerator;
     @Autowired
@@ -81,7 +82,7 @@ public class KakaoService{
                         .path("/oauth/token")
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", clientId)
-                        .queryParam("redirect_uri", "https://xn--vr-kg0j662g.site/oauth")
+                        .queryParam("redirect_uri", kakaoRedirectUri)
                         .queryParam("code", code)
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
