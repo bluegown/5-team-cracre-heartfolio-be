@@ -25,12 +25,11 @@ public class ApiSearchNewsService {
     @Value("${newsapi.client-secret}")
     private String CLIENT_SECRET; // 애플리케이션 클라이언트 시크릿
 
-    @Cacheable(value = "newsCache", key = "#query")
+
     public NewsResponseDto searchNews(String query) {
         String encodedQuery;
         try {
             encodedQuery = URLEncoder.encode(query, "UTF-8");
-
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("검색어 인코딩 실패", e);
         }
@@ -50,6 +49,7 @@ public class ApiSearchNewsService {
 
             List<NewsItemDto> filteredItems = responseDto.getItems().stream()
                     .filter(item -> containsKorean(item.getTitle()))
+                    .peek(item -> item.setFormattedPubDate(item.getPubDate())) // 날짜 형식 변경
                     .collect(Collectors.toList());
 
             responseDto.setItems(filteredItems);
