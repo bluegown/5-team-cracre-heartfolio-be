@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/donation")
 public class PaymentController {
 
     private final PaymentService paymentService;

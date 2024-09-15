@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-
+@RequestMapping("/api/donation")
 public class DonationController {
 
     // private final UserRepository userRepository;

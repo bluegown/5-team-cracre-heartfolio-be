@@ -24,7 +24,7 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public Donation makeDontaion(User user,Long cash){ // token을 통해 Controller에서 Id를 가져온다
 
-        Payment payment = Payment.builder().price(1000L) // TODO: 하드코딩 풀기 필요
+        Payment payment = Payment.builder().price(cash) // TODO: 하드코딩 풀기 필요
                 .status(PaymentStatus.READY)
                 .build();
 
@@ -32,7 +32,7 @@ public class DonationServiceImpl implements DonationService {
 
         Donation donation = Donation.builder()
                 .user(user)
-                .price(1000L) // TODO: 하드코딩 풀기 필요
+                .price(cash) // TODO: 하드코딩 풀기 필요
                 .itemName("캐시충전")
                 .orderUid(UUID.randomUUID().toString()) // 주문번호
                 .payment(payment)

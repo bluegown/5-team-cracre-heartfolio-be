@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @Controller
+@RequestMapping("/api/donation")
 public class LocalHomeController {
     private final UserRepository userRepository;
     private final DonationService donationService;
@@ -33,11 +34,12 @@ public class LocalHomeController {
     @GetMapping("/order")
     public String order(@RequestParam(name = "message", required = false) String message,
                         @RequestParam(name = "orderUid", required = false) String id,
+                        @RequestParam(name = "cash", required = false) long price,
                         Model model) {
 
         model.addAttribute("message", message);
         model.addAttribute("orderUid", id);
-
+        model.addAttribute("cash",price);
         return "order";
     }
     private final PaymentService paymentService;
@@ -77,7 +79,7 @@ public class LocalHomeController {
         }
         String encode = URLEncoder.encode(message, StandardCharsets.UTF_8);
 
-        return "redirect:/order?message="+encode+"&orderUid="+donation.getOrderUid();
+        return "redirect:/order?message="+encode+"&orderUid="+donation.getOrderUid()+"&cash="+cash;
 
     }
 
